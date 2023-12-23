@@ -8,38 +8,37 @@
 import UIKit
 
 protocol TVChannelViewActionsDelegate {
-    func didTapChannel()
+    func didTap(channel:  TVChannel, on segment: TVChannelsView.SegmentsElement)
 }
 
 class TVChannelsView: UIView {
-    enum Constants {
-        static let padding: CGFloat = 16
-        static let cellID = "channelCell"
-        static let navigationHeight: CGFloat = 120
-        static let segmentsHeight: CGFloat = 38
-        static let segmentsBottomPadding: CGFloat = 6
-        static let dividerHeight: CGFloat = 0.5
-        
-        static let tableViewRowHeight: CGFloat = 80
-        static let tableViewContentOffset: CGFloat = 20
-    }
-    
     private let tableView = UITableView(frame: .zero)
     private let navigationView = UIView()
-    private let segments = SegmentsView()
+    private let segmentsView = SegmentsView(segments: [SegmentsElement.all.rawValue, SegmentsElement.favorites.rawValue])
     private let divider = UIView()
     
+    private var currentSegment: SegmentsElement = .all
+    
     private var channels: [TVChannel] = []
+    
+    var actionsDelegate: TVChannelViewActionsDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
         makeConstraints()
         setupTableView()
+        subscribe()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+    }
+    
+    func subscribe() {
+        segmentsView.onTapSegment = { [unowned self] segment in
+            currentSegment = SegmentsElement.allCases[segment]
+        }
     }
     
     func configure(with channels: [TVChannel]) {
@@ -50,7 +49,7 @@ class TVChannelsView: UIView {
     private func setupView() {
         addSubview(navigationView)
         addSubview(tableView)
-        navigationView.addSubview(segments)
+        navigationView.addSubview(segmentsView)
         navigationView.addSubview(divider)
         
         backgroundColor = Theme.Colors.darkGray
@@ -60,7 +59,7 @@ class TVChannelsView: UIView {
     
     private func makeConstraints() {
         navigationView.translatesAutoresizingMaskIntoConstraints = false
-        segments.translatesAutoresizingMaskIntoConstraints = false
+        segmentsView.translatesAutoresizingMaskIntoConstraints = false
         divider.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -71,10 +70,10 @@ class TVChannelsView: UIView {
             navigationView.topAnchor.constraint(equalTo: topAnchor),
             
             // Segments View
-            segments.leadingAnchor.constraint(equalTo: navigationView.leadingAnchor, constant: Constants.padding),
-            segments.trailingAnchor.constraint(equalTo: navigationView.trailingAnchor, constant: -Constants.padding),
-            segments.bottomAnchor.constraint(equalTo: navigationView.bottomAnchor, constant: -Constants.segmentsBottomPadding),
-            segments.heightAnchor.constraint(equalToConstant: Constants.segmentsHeight),
+            segmentsView.leadingAnchor.constraint(equalTo: navigationView.leadingAnchor, constant: Constants.padding),
+            segmentsView.trailingAnchor.constraint(equalTo: navigationView.trailingAnchor, constant: -Constants.padding),
+            segmentsView.bottomAnchor.constraint(equalTo: navigationView.bottomAnchor, constant: -Constants.segmentsBottomPadding),
+            segmentsView.heightAnchor.constraint(equalToConstant: Constants.segmentsHeight),
             
             // Divider
             divider.leadingAnchor.constraint(equalTo: navigationView.leadingAnchor),
@@ -89,11 +88,6 @@ class TVChannelsView: UIView {
         ])
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        segments.setNeedsLayout()
-    }
-    
     private func setupTableView() {
         tableView.delegate = self
         tableView.dataSource = self
@@ -104,13 +98,13 @@ class TVChannelsView: UIView {
         tableView.contentInset.top = Constants.tableViewContentOffset
         tableView.setContentOffset(CGPoint(x: 0, y: -Constants.tableViewContentOffset), animated: false)
         tableView.translatesAutoresizingMaskIntoConstraints = false
-     
     }
 }
 
 extension TVChannelsView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // open video view controller
+        let channel = channels[indexPath.row]
+        actionsDelegate?.didTap(channel: channel, on: currentSegment)
     }
 }
 
@@ -130,6 +124,25 @@ extension TVChannelsView: UITableViewDataSource {
 }
 
 
+// MARK: - Constants
 extension TVChannelsView {
-    
+    enum Constants {
+        static let padding: CGFloat = 16
+        static let cellID = "channelCell"
+        static let navigationHeight: CGFloat = 120
+        static let segmentsHeight: CGFloat = 38
+        static let segmentsBottomPadding: CGFloat = 6
+        static let dividerHeight: CGFloat = 0.5
+        
+        static let tableViewRowHeight: CGFloat = 80
+        static let tableViewContentOffset: CGFloat = 20
+    }
+}
+
+// MARK: - Segments
+extension TVChannelsView {
+    enum SegmentsElement: String, CaseIterable {
+        case all = "Все"
+        case favorites = "Избранное"
+    }
 }

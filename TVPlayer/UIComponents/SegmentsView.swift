@@ -9,7 +9,7 @@ import UIKit
 
 class SegmentsView: UIView {
     
-    var segments = ["Все", "Избранное"]
+    var segments: [String] = []
     var segmentsStackView = UIStackView()
     let underLine = UIView()
     var underlineLeadingConstraint = NSLayoutConstraint()

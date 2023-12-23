@@ -76,6 +76,7 @@
 				8E500C292B3468D100574211 /* Network */,
 				8E500C2A2B3468DE00574211 /* Screens */,
 				8EFA73F62B34A73300F13FB6 /* Extensions */,
+				8EBF89422B375920004EFE12 /* UIComponents */,
 				8EFA73F92B34A82B00F13FB6 /* Colors.xcassets */,
 				8EFA73FB2B34AAB600F13FB6 /* Assets.xcassets */,
 				8E500C222B3463D700574211 /* Info.plist */,
@@ -117,9 +118,16 @@
 				8E500C332B34897700574211 /* TVChannelsView.swift */,
 				8E500C392B34946900574211 /* TVChannelCell.swift */,
 				8EFA73F42B34A11E00F13FB6 /* TVChannelsController.swift */,
-				8EFA73FF2B34CC1500F13FB6 /* SegmentsView.swift */,
 			);
 			path = TVChannels;
+			sourceTree = "<group>";
+		};
+		8EBF89422B375920004EFE12 /* UIComponents */ = {
+			isa = PBXGroup;
+			children = (
+				8EFA73FF2B34CC1500F13FB6 /* SegmentsView.swift */,
+			);
+			path = UIComponents;
 			sourceTree = "<group>";
 		};
 		8EFA73F62B34A73300F13FB6 /* Extensions */ = {

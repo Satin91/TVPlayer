@@ -24,11 +24,23 @@ class TVChannelsController: UIViewController {
      
     func setupView() {
         self.view = tvView
+        self.tvView.actionsDelegate = self
     }
     
     func loadChannels() {
         service.getChannels { channels in
             self.tvView.configure(with: channels)
+        }
+    }
+}
+
+extension TVChannelsController: TVChannelViewActionsDelegate {
+    func didTap(channel: TVChannel, on segment: TVChannelsView.SegmentsElement) {
+        switch segment {
+        case .all:
+            print(channel,segment)
+        case .favorites:
+            print(channel,segment)
         }
     }
 }
