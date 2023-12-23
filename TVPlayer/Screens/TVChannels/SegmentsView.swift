@@ -11,11 +11,15 @@ class SegmentsView: UIView {
     
     var segments = ["Все", "Избранное"]
     var segmentsStackView = UIStackView()
+    let underLine = UIView()
+    var underlineLeadingConstraint = NSLayoutConstraint()
+    var underlineWidthConstraint = NSLayoutConstraint()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
         createSegments()
+        makeConstraints()
     }
     
     required init?(coder: NSCoder) {
@@ -24,44 +28,82 @@ class SegmentsView: UIView {
     
     private func setupView() {
         addSubview(segmentsStackView)
-        segmentsStackView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(underLine)
+        underLine.backgroundColor = Theme.Colors.accent
         segmentsStackView.axis = .horizontal
         segmentsStackView.distribution = .fillProportionally
         segmentsStackView.alignment = .leading
         segmentsStackView.spacing = 16
+    }
+    
+    private func makeConstraints() {
+        segmentsStackView.translatesAutoresizingMaskIntoConstraints = false
+        underLine.translatesAutoresizingMaskIntoConstraints = false
+        
+        let firstSegment = segmentsStackView.arrangedSubviews[0] as? SegmentButton
+        
+        underlineWidthConstraint = underLine.widthAnchor.constraint(equalToConstant: firstSegment?.buttomWidth ?? .zero)
+        underlineLeadingConstraint = underLine.leadingAnchor.constraint(equalTo: leadingAnchor)
         
         NSLayoutConstraint.activate([
             segmentsStackView.topAnchor.constraint(equalTo: topAnchor),
             segmentsStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             segmentsStackView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
-            segmentsStackView.heightAnchor.constraint(equalToConstant: 80)
+            segmentsStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
+            underlineWidthConstraint,
+            underlineLeadingConstraint,
+            underLine.heightAnchor.constraint(equalToConstant: 2),
+            underLine.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
     }
     
+    private func animateView(index: Int) {
+        guard let buttons = segmentsStackView.arrangedSubviews as? [SegmentButton] else { return }
+        underlineWidthConstraint.constant = buttons[index].buttomWidth
+        underlineLeadingConstraint.constant = buttons[index].frame.origin.x
+        UIView.animate(withDuration: 0.2) {
+            self.layoutIfNeeded()
+            buttons.forEach { $0.isSelected($0.tag == index) }
+        }
+    }
+    
     private func createSegments() {
-        for segmentName in segments {
-            let segment = SegmentButton()
-            segment.setTitle(segmentName, for: .normal)
+        for (index, segmentName) in segments.enumerated() {
+            let segment = SegmentButton(text: segmentName)
+            segment.tag = index
+            segment.addTarget(self, action: #selector(segmentTapped), for: .touchUpInside)
+            segment.isSelected(index == 0)
             segmentsStackView.addArrangedSubview(segment)
         }
+    }
+    
+    @objc func segmentTapped(_ button: SegmentButton) {
+        animateView(index: button.tag)
     }
 }
 
 class SegmentButton: UIButton {
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupView()
+    
+    private let labelPadding: CGFloat = 16 * 2
+    
+    public var buttomWidth: CGFloat {
+        guard let width = titleLabel?.intrinsicContentSize.width else { return 0 }
+        return width + labelPadding
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    func isSelected(_ selected: Bool) {
+        self.layer.opacity = selected ? 1 : 0.5
     }
     
-    private func setupView() {
-        backgroundColor = .clear
-        setTitleColor(.white, for: .normal)
-        setTitleColor(.systemRed, for: .highlighted)
-        setTitleColor(.systemBlue, for: .focused)
-        setTitleColor(.systemOrange, for: .selected)
+    convenience init(text: String) {
+        self.init()
+        self.setTitle(text, for: .normal)
+        makeConstraints()
+    }
+    
+    private func makeConstraints() {
+        translatesAutoresizingMaskIntoConstraints = false
+        widthAnchor.constraint(equalToConstant: buttomWidth).isActive = true
     }
 }

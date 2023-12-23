@@ -16,7 +16,8 @@ class TVChannelsView: UIView {
         static let padding: CGFloat = 16
         static let cellID = "channelCell"
         static let navigationHeight: CGFloat = 120
-        static let segmentsHeight: CGFloat = 40
+        static let segmentsHeight: CGFloat = 38
+        static let segmentsBottomPadding: CGFloat = 6
         static let dividerHeight: CGFloat = 0.5
         
         static let tableViewRowHeight: CGFloat = 80
@@ -72,7 +73,7 @@ class TVChannelsView: UIView {
             // Segments View
             segments.leadingAnchor.constraint(equalTo: navigationView.leadingAnchor, constant: Constants.padding),
             segments.trailingAnchor.constraint(equalTo: navigationView.trailingAnchor, constant: -Constants.padding),
-            segments.bottomAnchor.constraint(equalTo: navigationView.bottomAnchor),
+            segments.bottomAnchor.constraint(equalTo: navigationView.bottomAnchor, constant: -Constants.segmentsBottomPadding),
             segments.heightAnchor.constraint(equalToConstant: Constants.segmentsHeight),
             
             // Divider
@@ -86,6 +87,11 @@ class TVChannelsView: UIView {
             tableView.bottomAnchor.constraint(equalTo: bottomAnchor),
             tableView.widthAnchor.constraint(equalTo: widthAnchor)
         ])
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        segments.setNeedsLayout()
     }
     
     private func setupTableView() {
