@@ -15,15 +15,14 @@ class SegmentsView: UIView {
     var underlineLeadingConstraint = NSLayoutConstraint()
     var underlineWidthConstraint = NSLayoutConstraint()
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    var onTapSegment: ((Int) -> Void)?
+    
+    convenience init(segments: [String]) {
+        self.init()
+        self.segments = segments
         setupView()
         createSegments()
         makeConstraints()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     private func setupView() {
@@ -60,6 +59,7 @@ class SegmentsView: UIView {
     
     private func animateView(index: Int) {
         guard let buttons = segmentsStackView.arrangedSubviews as? [SegmentButton] else { return }
+        onTapSegment?(index)
         underlineWidthConstraint.constant = buttons[index].buttomWidth
         underlineLeadingConstraint.constant = buttons[index].frame.origin.x
         UIView.animate(withDuration: 0.2) {
