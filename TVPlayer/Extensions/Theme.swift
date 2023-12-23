@@ -19,5 +19,7 @@ enum Theme {
     }
     
     enum Images {
+        static var star: UIImage { UIImage(named: "star") ?? UIImage() }
+        static var search: UIImage { UIImage(named: "search") ?? UIImage() }
     }
 }

@@ -9,6 +9,8 @@ import UIKit
 
 protocol TVChannelViewActionsDelegate {
     func didTap(channel:  TVChannel, on segment: TVChannelsView.SegmentsElement)
+    func segmentDidChange(to: TVChannelsView.SegmentsElement)
+    func tapFavorite(on channel: TVChannel)
 }
 
 class TVChannelsView: UIView {
@@ -38,12 +40,17 @@ class TVChannelsView: UIView {
     func subscribe() {
         segmentsView.onTapSegment = { [unowned self] segment in
             currentSegment = SegmentsElement.allCases[segment]
+            actionsDelegate?.segmentDidChange(to: currentSegment)
         }
     }
     
     func configure(with channels: [TVChannel]) {
         self.channels = channels
         self.tableView.reloadData()
+    }
+    
+    func reloadView() {
+        tableView.reloadData()
     }
     
     private func setupView() {
@@ -117,6 +124,9 @@ extension TVChannelsView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Constants.cellID, for: indexPath) as! TVChannelCell
         let item = channels[indexPath.row]
+        cell.onTapFavoriteButton = { [unowned self] in
+            actionsDelegate?.tapFavorite(on: item)
+        }
         cell.configureCell(with: item)
         return cell
     }

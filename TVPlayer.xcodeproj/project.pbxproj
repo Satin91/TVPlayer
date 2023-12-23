@@ -15,6 +15,8 @@
 		8E500C342B34897700574211 /* TVChannelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E500C332B34897700574211 /* TVChannelsView.swift */; };
 		8E500C382B348B8900574211 /* TVChannelsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E500C372B348B8900574211 /* TVChannelsModel.swift */; };
 		8E500C3A2B34946900574211 /* TVChannelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E500C392B34946900574211 /* TVChannelCell.swift */; };
+		8EBF89442B375E49004EFE12 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8EBF89432B375E49004EFE12 /* Images.xcassets */; };
+		8EBF89462B376AFC004EFE12 /* Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EBF89452B376AFC004EFE12 /* Observer.swift */; };
 		8EFA73F52B34A11E00F13FB6 /* TVChannelsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFA73F42B34A11E00F13FB6 /* TVChannelsController.swift */; };
 		8EFA73F82B34A76F00F13FB6 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFA73F72B34A76F00F13FB6 /* Theme.swift */; };
 		8EFA73FA2B34A82B00F13FB6 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8EFA73F92B34A82B00F13FB6 /* Colors.xcassets */; };
@@ -34,6 +36,8 @@
 		8E500C332B34897700574211 /* TVChannelsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVChannelsView.swift; sourceTree = "<group>"; };
 		8E500C372B348B8900574211 /* TVChannelsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVChannelsModel.swift; sourceTree = "<group>"; };
 		8E500C392B34946900574211 /* TVChannelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVChannelCell.swift; sourceTree = "<group>"; };
+		8EBF89432B375E49004EFE12 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		8EBF89452B376AFC004EFE12 /* Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observer.swift; sourceTree = "<group>"; };
 		8EFA73F42B34A11E00F13FB6 /* TVChannelsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVChannelsController.swift; sourceTree = "<group>"; };
 		8EFA73F72B34A76F00F13FB6 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		8EFA73F92B34A82B00F13FB6 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
@@ -78,6 +82,7 @@
 				8EFA73F62B34A73300F13FB6 /* Extensions */,
 				8EBF89422B375920004EFE12 /* UIComponents */,
 				8EFA73F92B34A82B00F13FB6 /* Colors.xcassets */,
+				8EBF89432B375E49004EFE12 /* Images.xcassets */,
 				8EFA73FB2B34AAB600F13FB6 /* Assets.xcassets */,
 				8E500C222B3463D700574211 /* Info.plist */,
 			);
@@ -135,6 +140,7 @@
 			children = (
 				8EFA73F72B34A76F00F13FB6 /* Theme.swift */,
 				8EFA73FD2B34B47F00F13FB6 /* AsyncImage.swift */,
+				8EBF89452B376AFC004EFE12 /* Observer.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -198,6 +204,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8EFA73FA2B34A82B00F13FB6 /* Colors.xcassets in Resources */,
+				8EBF89442B375E49004EFE12 /* Images.xcassets in Resources */,
 				8EFA73FC2B34AAB600F13FB6 /* Assets.xcassets in Resources */,
 				8E500C2C2B34699200574211 /* response.json in Resources */,
 			);
@@ -211,6 +218,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8EFA73F82B34A76F00F13FB6 /* Theme.swift in Sources */,
+				8EBF89462B376AFC004EFE12 /* Observer.swift in Sources */,
 				8E500C2E2B346CC600574211 /* TVChannel.swift in Sources */,
 				8E500C3A2B34946900574211 /* TVChannelCell.swift in Sources */,
 				8EFA73FE2B34B47F00F13FB6 /* AsyncImage.swift in Sources */,

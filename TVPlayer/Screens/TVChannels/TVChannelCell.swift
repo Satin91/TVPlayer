@@ -7,18 +7,21 @@
 
 import UIKit
 
-class TVChannelCell: UITableViewCell {
+final class TVChannelCell: UITableViewCell {
     
+    private let channelImage = UIImageView()
     private let channelNameLabel = UILabel()
     private let currentBroadcastLabel = UILabel()
-    private let channelImage = UIImageView()
     private let labelsStackView = UIStackView(frame: .zero)
+    private let favoriteButton = UIButton()
+    
+    var onTapFavoriteButton: (() -> Void)?
+    
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupView()
-        setupChannelImage()
-        setupStackView()
+        makeConstraints()
     }
     
     override func prepareForReuse() {
@@ -33,6 +36,7 @@ class TVChannelCell: UITableViewCell {
     public func configureCell(with channel: TVChannel) {
         channelNameLabel.text = channel.name
         currentBroadcastLabel.text = channel.currentBroadcast.title
+        favoriteButton.imageView?.tintColor = channel.isFavorite ? Theme.Colors.accent : Theme.Colors.lightGray
         channelImage.loadImage(from: channel.imageURL)
     }
     
@@ -40,41 +44,59 @@ class TVChannelCell: UITableViewCell {
         contentView.addSubview(channelImage)
         contentView.addSubview(channelNameLabel)
         contentView.addSubview(labelsStackView)
+        contentView.addSubview(favoriteButton)
         contentView.backgroundColor = Theme.Colors.gray
         contentView.layer.cornerRadius = 10
+        
         backgroundColor = .clear
         selectionStyle = .none
-    }
-    
-    private func setupStackView() {
+        
         labelsStackView.addArrangedSubview(channelNameLabel)
         labelsStackView.addArrangedSubview(currentBroadcastLabel)
         labelsStackView.alignment = .leading
         labelsStackView.axis = .vertical
         labelsStackView.spacing = 8
-        labelsStackView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            labelsStackView.leadingAnchor.constraint(equalTo: channelImage.trailingAnchor, constant: 16),
-            labelsStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            labelsStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
-        ])
+        
+        
+        favoriteButton.setImage(Theme.Images.star.withRenderingMode(.alwaysTemplate), for: .normal)
+        favoriteButton.imageView?.image?.withRenderingMode(.alwaysTemplate)
+        
+        favoriteButton.addTarget(self, action: #selector(tapFavorite(_:)), for: .touchUpInside)
+        
+        channelImage.backgroundColor = .white
+        channelImage.layer.cornerRadius = 12
         
         channelNameLabel.textColor = .white
+        
         currentBroadcastLabel.textColor = .white
     }
     
-    private func setupChannelImage() {
+    @objc private func tapFavorite(_ button: UIButton) {
+        self.onTapFavoriteButton?()
+    }
+
+    private func makeConstraints() {
         channelImage.translatesAutoresizingMaskIntoConstraints = false
-        channelImage.backgroundColor = .white
-        channelImage.layer.cornerRadius = 12
+        labelsStackView.translatesAutoresizingMaskIntoConstraints = false
+        favoriteButton.translatesAutoresizingMaskIntoConstraints = false
+        
         NSLayoutConstraint.activate([
             channelImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
             channelImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
             channelImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
-            channelImage.widthAnchor.constraint(equalTo: channelImage.heightAnchor)
+            channelImage.widthAnchor.constraint(equalTo: channelImage.heightAnchor),
+            
+            labelsStackView.leadingAnchor.constraint(equalTo: channelImage.trailingAnchor, constant: 16),
+            labelsStackView.trailingAnchor.constraint(equalTo: favoriteButton.leadingAnchor, constant: -8),
+            labelsStackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            
+            favoriteButton.widthAnchor.constraint(equalToConstant: 32),
+            favoriteButton.heightAnchor.constraint(equalToConstant: 32),
+            favoriteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
+            favoriteButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
-    
+
     private func clearReusableImage() {
         channelImage.image = nil
     }
