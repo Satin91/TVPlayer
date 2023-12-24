@@ -39,9 +39,5 @@ extension TVChannel {
         case current
         case image
     }
-    
-
-    
-
 }
 

@@ -21,7 +21,7 @@ class TVChannelsView: UIView {
     
     private var currentSegment: SegmentsElement = .all
     
-    private var channels: [TVChannel] = []
+    var observers: ObservableArray<Observer<TVChannel>> = .init(value: [])
     
     var actionsDelegate: TVChannelViewActionsDelegate?
     
@@ -42,11 +42,14 @@ class TVChannelsView: UIView {
             currentSegment = SegmentsElement.allCases[segment]
             actionsDelegate?.segmentDidChange(to: currentSegment)
         }
+        
+        observers.comp = { _ in
+            print("CLOSURE 1")
+        }
     }
     
-    func configure(with channels: [TVChannel]) {
-        self.channels = channels
-        self.tableView.reloadData()
+    func configure(with observers: ObservableArray<Observer<TVChannel>>) {
+        self.observers = observers
     }
     
     func reloadView() {
@@ -110,7 +113,7 @@ class TVChannelsView: UIView {
 
 extension TVChannelsView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let channel = channels[indexPath.row]
+        let channel = observers.value[indexPath.row].value
         actionsDelegate?.didTap(channel: channel, on: currentSegment)
     }
 }
@@ -118,12 +121,12 @@ extension TVChannelsView: UITableViewDelegate {
 extension TVChannelsView: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        self.channels.count
+        return observers.value.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Constants.cellID, for: indexPath) as! TVChannelCell
-        let item = channels[indexPath.row]
+        let item = observers.value[indexPath.row].value
         cell.onTapFavoriteButton = { [unowned self] in
             actionsDelegate?.tapFavorite(on: item)
         }
