@@ -7,10 +7,10 @@
 
 import UIKit
 
-protocol TVChannelViewActionsDelegate {
+protocol TVChannelViewActionsDelegate: AnyObject {
     func didTap(on row: Int, on segment: TVChannelsView.SegmentsElement)
     func segmentDidChange(to: TVChannelsView.SegmentsElement)
-    func tapFavorite(on channel: TVChannel)
+    func tapFavorite(on row: Int, on segment: TVChannelsView.SegmentsElement)
 }
 
 class TVChannelsView: UIView {
@@ -18,11 +18,14 @@ class TVChannelsView: UIView {
     private let navigationView = UIView()
     private let segmentsView = SegmentsView(segments: [SegmentsElement.all.rawValue, SegmentsElement.favorites.rawValue])
     private let divider = UIView()
+    private let activityIndicator = UIActivityIndicatorView(frame: .zero)
     
     private var currentSegment: SegmentsElement = .all
     
-    var actionsDelegate: TVChannelViewActionsDelegate?
+    weak var actionsDelegate: TVChannelViewActionsDelegate?
+    
     var dynamicChannels = Observable<[TVChannel]>([])
+    private var viewState: Bool = false
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -51,22 +54,72 @@ class TVChannelsView: UIView {
     func reloadView() {
         tableView.reloadData()
     }
+}
+
+extension TVChannelsView: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        actionsDelegate?.didTap(on: indexPath.row, on: currentSegment)
+    }
+}
+
+extension TVChannelsView: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return dynamicChannels.value.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.cellID, for: indexPath) as! TVChannelCell
+        let item = dynamicChannels.value[indexPath.row]
+        cell.onTapFavoriteButton = { [unowned self] in
+            actionsDelegate?.tapFavorite(on: indexPath.row, on: currentSegment)
+        }
+        cell.configureCell(with: item)
+        return cell
+    }
+    
+}
+
+// MARK: - Setup View
+extension TVChannelsView {
+    enum Constants {
+        static let padding: CGFloat = 16
+        static let cellID = "channelCell"
+        static let navigationHeight: CGFloat = 120
+        static let segmentsHeight: CGFloat = 38
+        static let segmentsBottomPadding: CGFloat = 6
+        static let dividerHeight: CGFloat = 0.5
+        
+        static let tableViewRowHeight: CGFloat = 80
+        static let tableViewContentOffset: CGFloat = 20
+    }
+    
+    enum SegmentsElement: String, CaseIterable {
+        case all = "Все"
+        case favorites = "Избранное"
+    }
     
     private func setupView() {
         addSubview(navigationView)
         addSubview(tableView)
+        addSubview(activityIndicator)
         navigationView.addSubview(segmentsView)
         navigationView.addSubview(divider)
         
         backgroundColor = Theme.Colors.darkGray
         navigationView.backgroundColor = Theme.Colors.gray
         divider.backgroundColor = Theme.Colors.divider
+        activityIndicator.startAnimating()
+        activityIndicator.isHidden = false
+        activityIndicator.style = UIActivityIndicatorView.Style.white
     }
     
     private func makeConstraints() {
         navigationView.translatesAutoresizingMaskIntoConstraints = false
         segmentsView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.translatesAutoresizingMaskIntoConstraints = false
         divider.translatesAutoresizingMaskIntoConstraints = false
+//        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.isHidden = true
         
         NSLayoutConstraint.activate([
             // Navigation View
@@ -90,7 +143,12 @@ class TVChannelsView: UIView {
             // Table View
             tableView.topAnchor.constraint(equalTo: navigationView.bottomAnchor),
             tableView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            tableView.widthAnchor.constraint(equalTo: widthAnchor)
+            tableView.widthAnchor.constraint(equalTo: widthAnchor),
+            
+            // Activity Indicator
+//            activityIndicator.topAnchor.constraint(equalTo: navigationView.bottomAnchor),
+//            activityIndicator.bottomAnchor.constraint(equalTo: bottomAnchor),
+//            activityIndicator.widthAnchor.constraint(equalTo: widthAnchor)
         ])
     }
     
@@ -103,54 +161,5 @@ class TVChannelsView: UIView {
         tableView.separatorStyle = .none
         tableView.contentInset.top = Constants.tableViewContentOffset
         tableView.setContentOffset(CGPoint(x: 0, y: -Constants.tableViewContentOffset), animated: false)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-    }
-}
-
-extension TVChannelsView: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        actionsDelegate?.didTap(on: indexPath.row, on: currentSegment)
-    }
-}
-
-extension TVChannelsView: UITableViewDataSource {
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dynamicChannels.value.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.cellID, for: indexPath) as! TVChannelCell
-        let item = dynamicChannels.value[indexPath.row]
-        cell.onTapFavoriteButton = { [unowned self] in
-            actionsDelegate?.tapFavorite(on: item)
-        }
-        cell.configureCell(with: item)
-        return cell
-    }
-    
-}
-
-
-// MARK: - Constants
-extension TVChannelsView {
-    enum Constants {
-        static let padding: CGFloat = 16
-        static let cellID = "channelCell"
-        static let navigationHeight: CGFloat = 120
-        static let segmentsHeight: CGFloat = 38
-        static let segmentsBottomPadding: CGFloat = 6
-        static let dividerHeight: CGFloat = 0.5
-        
-        static let tableViewRowHeight: CGFloat = 80
-        static let tableViewContentOffset: CGFloat = 20
-    }
-}
-
-// MARK: - Segments
-extension TVChannelsView {
-    enum SegmentsElement: String, CaseIterable {
-        case all = "Все"
-        case favorites = "Избранное"
     }
 }

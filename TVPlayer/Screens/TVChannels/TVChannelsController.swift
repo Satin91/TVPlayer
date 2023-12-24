@@ -9,12 +9,13 @@ import UIKit
 
 class TVChannelsController: UIViewController {
     let service = TVChannelService()
+    var coordinator: CoordinatorBehavior?
     
     private var tvView = TVChannelsView()
     
-    private var allChannels = Observable<[TVChannel]>([])
+    private var allChannels: [TVChannel] = []
     private var favoriteChannels: [TVChannel] {
-        allChannels.value.filter { $0.isFavorite }
+        allChannels.filter { $0.isFavorite }
     }
     
     private var channels = Observable<[TVChannel]>([])
@@ -41,32 +42,39 @@ class TVChannelsController: UIViewController {
     
     func loadChannels() {
         service.getChannels { channels in
-            self.allChannels.value = channels
+            self.allChannels = channels
             self.channels.value = channels
         }
     }
 }
 
 extension TVChannelsController: TVChannelViewActionsDelegate {
+    
+    func tapFavorite(on row: Int, on segment: TVChannelsView.SegmentsElement) {
+        switch segment {
+        case .all:
+            self.allChannels[row].isFavorite.toggle()
+            channels.send(allChannels)
+        case .favorites:
+            self.favoriteChannels[row].isFavorite.toggle()
+            channels.send(favoriteChannels)
+        }
+    }
+    
     func didTap(on row: Int, on segment: TVChannelsView.SegmentsElement) {
         switch segment {
         case .all:
-            break
+            coordinator?.pushToVideoPlayer()
         case .favorites:
             favoriteChannels[row].isFavorite.toggle()
             channels.send(favoriteChannels)
         }
     }
     
-    func tapFavorite(on channel: TVChannel) {
-        channel.isFavorite.toggle()
-        tvView.reloadView()
-    }
-    
     func segmentDidChange(to: TVChannelsView.SegmentsElement) {
         switch to {
         case .all:
-            channels.send(allChannels.value)
+            channels.send(allChannels)
         case .favorites:
             channels.send(favoriteChannels)
         }
