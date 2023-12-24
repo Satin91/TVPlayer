@@ -47,7 +47,7 @@ class ObservableArray<T>: Observable {
         }
     }
     
-    private var toValue: ObservableArray?
+    var toValue: ObservableArray?
     
     init(value: [T]) {
         self.value = value
@@ -55,9 +55,10 @@ class ObservableArray<T>: Observable {
     
     var comp: (([T]) -> Void)?
     
-    func subscribe(onChange: ([T]) -> Void) {
-        
-        onChange(value)
+    func subscribe(onChange: @escaping ([T]) -> Void ){
+        comp = { asd in
+            onChange(asd)
+        }
     }
     
     func send(_ object: [T]) {

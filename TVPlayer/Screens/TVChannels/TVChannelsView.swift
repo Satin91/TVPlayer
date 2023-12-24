@@ -22,7 +22,6 @@ class TVChannelsView: UIView {
     private var currentSegment: SegmentsElement = .all
     
     var observers: ObservableArray<Observer<TVChannel>> = .init(value: [])
-    
     var actionsDelegate: TVChannelViewActionsDelegate?
     
     override init(frame: CGRect) {
@@ -38,13 +37,9 @@ class TVChannelsView: UIView {
     }
     
     func subscribe() {
-        segmentsView.onTapSegment = { [unowned self] segment in
+        segmentsView.onTapSegment { [unowned self] segment in
             currentSegment = SegmentsElement.allCases[segment]
             actionsDelegate?.segmentDidChange(to: currentSegment)
-        }
-        
-        observers.comp = { _ in
-            print("CLOSURE 1")
         }
     }
     

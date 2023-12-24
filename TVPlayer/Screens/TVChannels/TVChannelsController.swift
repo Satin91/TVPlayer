@@ -29,10 +29,9 @@ class TVChannelsController: UIViewController {
     }
     
     func subscribe() {
-//        self.channels.bind(to: &self.tvView.observers)
-        tvView.observers = self.channels
-        self.channels.comp = { _ in
-            self.tvView.reloadView()
+        channels.bind(to: &self.tvView.observers)
+        channels.subscribe { [weak self] channels in
+            self?.tvView.reloadView()
         }
         
         self.channels.value.forEach { elem in
@@ -40,7 +39,7 @@ class TVChannelsController: UIViewController {
                 if property {
                     self.favoritesChannels.append(Observer(value: channel) )
                 } else {
-                    self.favoritesChannels.removeAll(where: {$0.value == channel})
+                    self.favoritesChannels.removeAll(where: { $0.value == channel } )
                 }
             }
         }
@@ -69,11 +68,10 @@ extension TVChannelsController: TVChannelViewActionsDelegate {
         switch to {
         case .all:
             channels.send(allChannels)
-//            tvView.reloadView()
+            tvView.reloadView()
         case .favorites:
             self.channels.send(favoritesChannels)
-//            send(favoritesChannels.map { Observer(value: $0) } )
-//            tvView.reloadView()
+            tvView.reloadView()
         }
     }
     

@@ -9,13 +9,13 @@ import UIKit
 
 class SegmentsView: UIView {
     
-    var segments: [String] = []
-    var segmentsStackView = UIStackView()
-    let underLine = UIView()
-    var underlineLeadingConstraint = NSLayoutConstraint()
-    var underlineWidthConstraint = NSLayoutConstraint()
+    private var segments: [String] = []
+    private var segmentsStackView = UIStackView()
+    private let underLine = UIView()
+    private var underlineLeadingConstraint = NSLayoutConstraint()
+    private var underlineWidthConstraint = NSLayoutConstraint()
     
-    var onTapSegment: ((Int) -> Void)?
+    private var onTapSegment: ((Int) -> Void)?
     
     convenience init(segments: [String]) {
         self.init()
@@ -23,6 +23,12 @@ class SegmentsView: UIView {
         setupView()
         createSegments()
         makeConstraints()
+    }
+    
+    func onTapSegment( onChange: @escaping (Int) -> Void ) {
+        self.onTapSegment = { index in
+            onChange(index)
+        }
     }
     
     private func setupView() {
