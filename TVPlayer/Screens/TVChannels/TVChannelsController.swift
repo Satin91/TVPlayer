@@ -12,10 +12,12 @@ class TVChannelsController: UIViewController {
     
     private var tvView = TVChannelsView()
     
-    private var allChannels: [Observer<TVChannel>] = []
-    private var favoritesChannels: [Observer<TVChannel>] = []
+    private var allChannels = Observable<[TVChannel]>([])
+    private var favoriteChannels: [TVChannel] {
+        allChannels.value.filter { $0.isFavorite }
+    }
     
-    private var channels: ObservableArray<Observer<TVChannel>> = .init(value: [])
+    private var channels = Observable<[TVChannel]>([])
     
     override func loadView() {
         super.loadView()
@@ -29,20 +31,7 @@ class TVChannelsController: UIViewController {
     }
     
     func subscribe() {
-        channels.bind(to: &self.tvView.observers)
-        channels.subscribe { [weak self] channels in
-            self?.tvView.reloadView()
-        }
-        
-        self.channels.value.forEach { elem in
-            elem.observe(for: \.isFavorite) { channel, property in
-                if property {
-                    self.favoritesChannels.append(Observer(value: channel) )
-                } else {
-                    self.favoritesChannels.removeAll(where: { $0.value == channel } )
-                }
-            }
-        }
+        channels.bind { [weak self] in self?.tvView.dynamicChannels.value = $0 }
     }
     
     func setupView() {
@@ -52,13 +41,23 @@ class TVChannelsController: UIViewController {
     
     func loadChannels() {
         service.getChannels { channels in
-            self.allChannels = channels.map({ Observer(value: $0) })
-            self.channels.send(self.allChannels)
+            self.allChannels.value = channels
+            self.channels.value = channels
         }
     }
 }
 
 extension TVChannelsController: TVChannelViewActionsDelegate {
+    func didTap(on row: Int, on segment: TVChannelsView.SegmentsElement) {
+        switch segment {
+        case .all:
+            break
+        case .favorites:
+            favoriteChannels[row].isFavorite.toggle()
+            channels.send(favoriteChannels)
+        }
+    }
+    
     func tapFavorite(on channel: TVChannel) {
         channel.isFavorite.toggle()
         tvView.reloadView()
@@ -67,21 +66,9 @@ extension TVChannelsController: TVChannelViewActionsDelegate {
     func segmentDidChange(to: TVChannelsView.SegmentsElement) {
         switch to {
         case .all:
-            channels.send(allChannels)
-            tvView.reloadView()
+            channels.send(allChannels.value)
         case .favorites:
-            self.channels.send(favoritesChannels)
-            tvView.reloadView()
-        }
-    }
-    
-    func didTap(channel: TVChannel, on segment: TVChannelsView.SegmentsElement) {
-        switch segment {
-        case .all:
-            tvView.reloadView()
-        case .favorites:
-            channel.isFavorite.toggle()
-//            tvView.reloadView()
+            channels.send(favoriteChannels)
         }
     }
 }

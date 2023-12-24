@@ -8,66 +8,25 @@
 import Foundation
 import UIKit
 
-protocol Observable {
-    associatedtype T
-    func send(_ object: T)
-}
-
-class Observer<T: NSObject>: Observable {
+class Observable<T> {
+  typealias Listener = (T) -> ()
+  private var listeners: [Listener] = []
+  init(_ v: T) {
+    value = v
+  }
+  var value: T {
+    didSet {
+      for l in listeners { l(value) } }
+  }
+  func bind(_ to: @escaping Listener) {
+    listeners.append(to)
+    to(value)
+  }
     
-    var kvoToken: NSKeyValueObservation?
-    var value: T
-    
-    func send(_ object: T) {
-        self.value = object
-    }
-    
-    init(value: T) {
+    func send(_ value: T) {
         self.value = value
     }
-    
-    func observe<Property>(for keyPath: KeyPath<T, Property>, onChange: @escaping (T, Property) -> Void) {
-        kvoToken = value.observe(keyPath, options: .new, changeHandler: { change, value in
-            guard let value = value.newValue else { return }
-            onChange(change, value)
-        })
-    }
-    
-    deinit {
-        kvoToken?.invalidate()
-    }
-}
-
-class ObservableArray<T>: Observable {
-    
-    var value: [T] {
-        didSet {
-            guard var toValue = self.toValue else { return }
-            bind(to: &toValue)
-        }
-    }
-    
-    var toValue: ObservableArray?
-    
-    init(value: [T]) {
-        self.value = value
-    }
-    
-    var comp: (([T]) -> Void)?
-    
-    func subscribe(onChange: @escaping ([T]) -> Void ){
-        comp = { asd in
-            onChange(asd)
-        }
-    }
-    
-    func send(_ object: [T]) {
-        value = object
-        comp?(object)
-    }
-    
-    func bind(to: inout ObservableArray) {
-        to = self
-        comp?(value)
-    }
+  func subscribe(l: @escaping Listener) {
+    listeners.append(l)
+  }
 }

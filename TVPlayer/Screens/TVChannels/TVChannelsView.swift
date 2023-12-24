@@ -8,7 +8,7 @@
 import UIKit
 
 protocol TVChannelViewActionsDelegate {
-    func didTap(channel:  TVChannel, on segment: TVChannelsView.SegmentsElement)
+    func didTap(on row: Int, on segment: TVChannelsView.SegmentsElement)
     func segmentDidChange(to: TVChannelsView.SegmentsElement)
     func tapFavorite(on channel: TVChannel)
 }
@@ -21,8 +21,8 @@ class TVChannelsView: UIView {
     
     private var currentSegment: SegmentsElement = .all
     
-    var observers: ObservableArray<Observer<TVChannel>> = .init(value: [])
     var actionsDelegate: TVChannelViewActionsDelegate?
+    var dynamicChannels = Observable<[TVChannel]>([])
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -41,10 +41,11 @@ class TVChannelsView: UIView {
             currentSegment = SegmentsElement.allCases[segment]
             actionsDelegate?.segmentDidChange(to: currentSegment)
         }
-    }
-    
-    func configure(with observers: ObservableArray<Observer<TVChannel>>) {
-        self.observers = observers
+        
+        dynamicChannels.subscribe { channels in
+            print("reload view")
+            self.reloadView()
+        }
     }
     
     func reloadView() {
@@ -108,20 +109,19 @@ class TVChannelsView: UIView {
 
 extension TVChannelsView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let channel = observers.value[indexPath.row].value
-        actionsDelegate?.didTap(channel: channel, on: currentSegment)
+        actionsDelegate?.didTap(on: indexPath.row, on: currentSegment)
     }
 }
 
 extension TVChannelsView: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return observers.value.count
+        return dynamicChannels.value.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Constants.cellID, for: indexPath) as! TVChannelCell
-        let item = observers.value[indexPath.row].value
+        let item = dynamicChannels.value[indexPath.row]
         cell.onTapFavoriteButton = { [unowned self] in
             actionsDelegate?.tapFavorite(on: item)
         }
