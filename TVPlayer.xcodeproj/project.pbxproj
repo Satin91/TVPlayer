@@ -18,6 +18,8 @@
 		8E500C342B34897700574211 /* TVChannelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E500C332B34897700574211 /* TVChannelsView.swift */; };
 		8E500C382B348B8900574211 /* TVChannelsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E500C372B348B8900574211 /* TVChannelsModel.swift */; };
 		8E500C3A2B34946900574211 /* TVChannelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E500C392B34946900574211 /* TVChannelCell.swift */; };
+		8E61B3472B39FB1500B1EF6E /* TVPlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E61B3462B39FB1500B1EF6E /* TVPlayerModel.swift */; };
+		8E61B3492B3A195500B1EF6E /* Slider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E61B3482B3A195500B1EF6E /* Slider.swift */; };
 		8EA33EAB2B38A16800759822 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA33EAA2B38A16800759822 /* VideoPlayer.swift */; };
 		8EBF89442B375E49004EFE12 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8EBF89432B375E49004EFE12 /* Images.xcassets */; };
 		8EBF89462B376AFC004EFE12 /* Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EBF89452B376AFC004EFE12 /* Observer.swift */; };
@@ -43,6 +45,8 @@
 		8E500C332B34897700574211 /* TVChannelsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVChannelsView.swift; sourceTree = "<group>"; };
 		8E500C372B348B8900574211 /* TVChannelsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVChannelsModel.swift; sourceTree = "<group>"; };
 		8E500C392B34946900574211 /* TVChannelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVChannelCell.swift; sourceTree = "<group>"; };
+		8E61B3462B39FB1500B1EF6E /* TVPlayerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVPlayerModel.swift; sourceTree = "<group>"; };
+		8E61B3482B3A195500B1EF6E /* Slider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slider.swift; sourceTree = "<group>"; };
 		8EA33EAA2B38A16800759822 /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
 		8EBF89432B375E49004EFE12 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		8EBF89452B376AFC004EFE12 /* Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observer.swift; sourceTree = "<group>"; };
@@ -69,6 +73,7 @@
 			isa = PBXGroup;
 			children = (
 				8E1C46182B3888BB009035E0 /* TVPlayerController.swift */,
+				8E61B3462B39FB1500B1EF6E /* TVPlayerModel.swift */,
 				8E1C461A2B388952009035E0 /* TVPlayerView.swift */,
 			);
 			path = VideoPlayer;
@@ -151,6 +156,7 @@
 			children = (
 				8EA33EAA2B38A16800759822 /* VideoPlayer.swift */,
 				8EFA73FF2B34CC1500F13FB6 /* SegmentsView.swift */,
+				8E61B3482B3A195500B1EF6E /* Slider.swift */,
 			);
 			path = UIComponents;
 			sourceTree = "<group>";
@@ -241,6 +247,7 @@
 				8EFA73F82B34A76F00F13FB6 /* Theme.swift in Sources */,
 				8EBF89462B376AFC004EFE12 /* Observer.swift in Sources */,
 				8EA33EAB2B38A16800759822 /* VideoPlayer.swift in Sources */,
+				8E61B3492B3A195500B1EF6E /* Slider.swift in Sources */,
 				8E1C46162B388553009035E0 /* AppCoordinator.swift in Sources */,
 				8E500C2E2B346CC600574211 /* TVChannel.swift in Sources */,
 				8E500C3A2B34946900574211 /* TVChannelCell.swift in Sources */,
@@ -249,6 +256,7 @@
 				8E500C322B347FF700574211 /* NetworkManager.swift in Sources */,
 				8E500C382B348B8900574211 /* TVChannelsModel.swift in Sources */,
 				8E1C461B2B388952009035E0 /* TVPlayerView.swift in Sources */,
+				8E61B3472B39FB1500B1EF6E /* TVPlayerModel.swift in Sources */,
 				8E500C342B34897700574211 /* TVChannelsView.swift in Sources */,
 				8E500C152B3463D600574211 /* AppDelegate.swift in Sources */,
 				8EFA74002B34CC1500F13FB6 /* SegmentsView.swift in Sources */,

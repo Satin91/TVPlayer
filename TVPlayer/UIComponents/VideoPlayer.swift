@@ -24,21 +24,27 @@ class VideoPlayer: UIView {
     
     func configure(with url: URL?) {
         guard let url = url else  {
+            // TODO: Make error
             fatalError("URL Not exists")
         }
         player = AVPlayer(url: url)
         player = AVPlayer(url: url)
         playerLayer = .init(player: player)
         layer.addSublayer(playerLayer)
-        player.play()
     }
     
     func playVideo() {
         player.play()
     }
     
+    func pauseVideo() {
+        player.pause()
+    }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
+        
         playerLayer.frame = self.bounds
+        
     }
 }

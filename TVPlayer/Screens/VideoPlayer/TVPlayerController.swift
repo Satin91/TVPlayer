@@ -10,7 +10,10 @@ import UIKit
 
 final class TVPlayerController: UIViewController {
     
+    var playerState = Observable(TVPlayerModel.PlayerState.pause)
+    
     var coordinator: CoordinatorBehavior?
+    
     var presentedView = TVPlayerView()
     var tvChannel: TVChannel!
     
@@ -22,12 +25,17 @@ final class TVPlayerController: UIViewController {
     override func loadView() {
         super.loadView()
         self.view = presentedView
+        presentedView.configure(with: tvChannel)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        presentedView.configure(with: tvChannel)
+        subscribe()
+    }
+    
+    func subscribe() {
+        playerState.bind { [weak self] in self?.presentedView.playerState.send($0) }
     }
     
     func setupView() {
@@ -36,7 +44,21 @@ final class TVPlayerController: UIViewController {
 }
 
 extension TVPlayerController: TVPlayerViewActionsDelegate {
+    func playerTapped() {
+        switch playerState.value {
+        case .loading:
+            break
+        case .playing:
+            playerState.send(.pause)
+        case .pause:
+            playerState.send(.playing)
+        case .stop:
+            break
+        }
+    }
+    
     func navigationBackButtonTap() {
+        playerState.send(.stop)
         coordinator?.dismiss()
     }
 }

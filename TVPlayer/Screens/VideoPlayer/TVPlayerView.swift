@@ -11,6 +11,7 @@ import AVFoundation
 
 protocol TVPlayerViewActionsDelegate: AnyObject {
     func navigationBackButtonTap()
+    func playerTapped()
 }
 
 final class TVPlayerView: UIView {
@@ -18,49 +19,85 @@ final class TVPlayerView: UIView {
     enum Constants {
         static let topContainerHeight: CGFloat = 44
         static let topPadding: CGFloat = 12
+        static let bottomPadding: CGFloat = 12
         static let smallPadding: CGFloat = 10
         static let mediumPadding: CGFloat = 16
         static let largePadding: CGFloat = 24
+        static let playImageSide: CGFloat = 120
     }
     
     let testVideoURL = URL(string: "https://tv-trt1.medya.trt.com.tr/master_480.m3u8")
-    var topContainer = UIView()
     
+    // top on view
+    var topContainer = UIView()
     let backButton = UIButton()
     let channelImage = UIImageView()
     var broadcastLabel = UILabel()
     var channelNameLabel = UILabel()
     let topLabelsStackView = UIStackView()
+    let playImageView = UIImageView()
+    
+    // bottom on view
+    var bottomContainer = UIView()
+    var timeline = Slider()
+    
+    var playerState: Observable<TVPlayerModel.PlayerState> = .init(.pause)
     
     weak var actionsDelegate: TVPlayerViewActionsDelegate?
+    
+    var topContainerConstraint = NSLayoutConstraint()
+    var bottomContainerConstraint = NSLayoutConstraint()
     
     var videoPlayer = VideoPlayer()
     
     var channel: TVChannel?
     
+    var timer: Timer?
+    
+    
+    
     func configure(with channel: TVChannel) {
         self.channel = channel
-        self.channelImage.loadImage(from: channel.imageURL)
-        self.channelNameLabel.text = channel.name
-        self.broadcastLabel.text = channel.currentBroadcast.title
+        channelImage.loadImage(from: channel.imageURL)
+        channelNameLabel.text = channel.name
+        broadcastLabel.text = channel.currentBroadcast.title
         videoPlayer.configure(with: testVideoURL)
     }
-    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
         makeConstraints()
+        subscribe()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private func subscribe() {
+        playerState.subscribe { [unowned self] playerState in
+            switch playerState {
+            case .loading:
+                pauseState()
+            case .playing:
+                playingState()
+            case .pause:
+                pauseState()
+            case .stop:
+                stopState()
+            }
+        }
+    }
+    
     private func setupView() {
-        addSubview(topContainer)
         addSubview(videoPlayer)
+        addSubview(topContainer)
+        addSubview(bottomContainer)
+        addSubview(playImageView)
         
+        
+        // Top
         topContainer.addSubview(backButton)
         topContainer.addSubview(channelImage)
         topContainer.addSubview(topLabelsStackView)
@@ -79,16 +116,83 @@ final class TVPlayerView: UIView {
         backButton.setImage(Theme.Images.arrowLeft, for: .normal)
         backButton.addTarget(self, action: #selector(backButtonTapped(_:)), for: .touchUpInside)
         
+        // Bottom
+        bottomContainer.addSubview(timeline)
+        
+        
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(playerTapped(_:)))
+        videoPlayer.addGestureRecognizer(gesture)
+        
+        playImageView.image = Theme.Images.play
+        playImageView.layer.opacity = 0
+        
         backgroundColor = Theme.Colors.darkGray
     }
     
-    func playVideo() {
+    private func playingState() {
+        hideImageWithAnimate()
+//        timer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { timer in
+//            self.hideTopContainer()
+//        }
         videoPlayer.playVideo()
+    }
+    
+    private func pauseState() {
+//        timer?.invalidate()
+//        showTopContainer()
+        showImageWithAnimate()
+        videoPlayer.pauseVideo()
+    }
+    
+    private func stopState() {
+        playImageView.isHidden = true
+        videoPlayer.pauseVideo()
+    }
+    
+    @objc private func playerTapped(_ gesture: UITapGestureRecognizer) {
+        actionsDelegate?.playerTapped()
     }
     
     @objc private func backButtonTapped(_ button: UIButton) {
         actionsDelegate?.navigationBackButtonTap()
     }
+    
+    private func hideTopContainer() {
+        self.topContainerConstraint.constant = 0
+        UIView.animate(withDuration: 0.3) {
+            self.topContainer.layer.opacity = 0
+            self.layoutIfNeeded()
+        }
+    }
+    
+    private func showTopContainer() {
+        self.topContainerConstraint.constant = Constants.topPadding
+        UIView.animate(withDuration: 0.3) {
+            self.topContainer.layer.opacity = 1
+            self.layoutIfNeeded()
+        }
+    }
+    
+    private func hideImageWithAnimate() {
+        UIView.animate(withDuration: 0.05) {
+            self.playImageView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+        } completion: { _ in
+            UIView.animate(withDuration: 0.2) {
+                self.playImageView.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+                self.playImageView.layer.opacity = 0
+            }
+        }
+
+    }
+    
+    private func showImageWithAnimate() {
+        playImageView.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+        UIView.animate(withDuration: 0.4, delay: .zero, usingSpringWithDamping: 0.55, initialSpringVelocity: 0.8) {
+            self.playImageView.layer.opacity = 1
+            self.playImageView.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+        }
+    }
+    
     
     private func makeConstraints() {
         topContainer.translatesAutoresizingMaskIntoConstraints = false
@@ -97,10 +201,16 @@ final class TVPlayerView: UIView {
         backButton.translatesAutoresizingMaskIntoConstraints = false
         topLabelsStackView.translatesAutoresizingMaskIntoConstraints = false
         videoPlayer.translatesAutoresizingMaskIntoConstraints = false
+        playImageView.translatesAutoresizingMaskIntoConstraints = false
+        bottomContainer.translatesAutoresizingMaskIntoConstraints = false
+        timeline.translatesAutoresizingMaskIntoConstraints = false
+        
+        topContainerConstraint = topContainer.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: Constants.topPadding)
+        bottomContainerConstraint = bottomContainer.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -Constants.bottomPadding)
         
         NSLayoutConstraint.activate([
             // Top container
-            topContainer.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: Constants.topPadding),
+            topContainerConstraint,
             topContainer.heightAnchor.constraint(equalToConstant: Constants.topContainerHeight),
             topContainer.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: Constants.smallPadding),
             topContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Constants.smallPadding),
@@ -128,7 +238,23 @@ final class TVPlayerView: UIView {
             videoPlayer.leadingAnchor.constraint(equalTo: leadingAnchor),
             videoPlayer.trailingAnchor.constraint(equalTo: trailingAnchor),
             videoPlayer.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
+            // PlayImage
+            playImageView.widthAnchor.constraint(equalToConstant: Constants.playImageSide),
+            playImageView.heightAnchor.constraint(equalTo: playImageView.widthAnchor),
+            playImageView.centerXAnchor.constraint(equalTo: videoPlayer.centerXAnchor),
+            playImageView.centerYAnchor.constraint(equalTo: videoPlayer.centerYAnchor),
+            
+            // Bottom container
+            bottomContainerConstraint,
+            bottomContainer.heightAnchor.constraint(equalToConstant: 44),
+            bottomContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Constants.mediumPadding),
+            bottomContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Constants.mediumPadding),
+            
+            timeline.heightAnchor.constraint(equalToConstant: 18),
+            timeline.bottomAnchor.constraint(equalTo: bottomContainer.bottomAnchor),
+            timeline.leadingAnchor.constraint(equalTo: bottomContainer.leadingAnchor),
+            timeline.trailingAnchor.constraint(equalTo: bottomContainer.trailingAnchor),
         ])
-        
     }
 }
