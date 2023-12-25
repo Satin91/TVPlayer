@@ -10,7 +10,6 @@
 		8E1C46162B388553009035E0 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E1C46152B388553009035E0 /* AppCoordinator.swift */; };
 		8E1C46192B3888BB009035E0 /* TVPlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E1C46182B3888BB009035E0 /* TVPlayerController.swift */; };
 		8E1C461B2B388952009035E0 /* TVPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E1C461A2B388952009035E0 /* TVPlayerView.swift */; };
-		8E1C461D2B388B6D009035E0 /* NavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E1C461C2B388B6D009035E0 /* NavigationView.swift */; };
 		8E500C152B3463D600574211 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E500C142B3463D600574211 /* AppDelegate.swift */; };
 		8E500C2C2B34699200574211 /* response.json in Resources */ = {isa = PBXBuildFile; fileRef = 8E500C2B2B34699200574211 /* response.json */; };
 		8E500C2E2B346CC600574211 /* TVChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E500C2D2B346CC600574211 /* TVChannel.swift */; };
@@ -19,6 +18,7 @@
 		8E500C342B34897700574211 /* TVChannelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E500C332B34897700574211 /* TVChannelsView.swift */; };
 		8E500C382B348B8900574211 /* TVChannelsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E500C372B348B8900574211 /* TVChannelsModel.swift */; };
 		8E500C3A2B34946900574211 /* TVChannelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E500C392B34946900574211 /* TVChannelCell.swift */; };
+		8EA33EAB2B38A16800759822 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA33EAA2B38A16800759822 /* VideoPlayer.swift */; };
 		8EBF89442B375E49004EFE12 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8EBF89432B375E49004EFE12 /* Images.xcassets */; };
 		8EBF89462B376AFC004EFE12 /* Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EBF89452B376AFC004EFE12 /* Observer.swift */; };
 		8EFA73F52B34A11E00F13FB6 /* TVChannelsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFA73F42B34A11E00F13FB6 /* TVChannelsController.swift */; };
@@ -33,7 +33,6 @@
 		8E1C46152B388553009035E0 /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		8E1C46182B3888BB009035E0 /* TVPlayerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVPlayerController.swift; sourceTree = "<group>"; };
 		8E1C461A2B388952009035E0 /* TVPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVPlayerView.swift; sourceTree = "<group>"; };
-		8E1C461C2B388B6D009035E0 /* NavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationView.swift; sourceTree = "<group>"; };
 		8E500C112B3463D600574211 /* TVPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TVPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E500C142B3463D600574211 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8E500C222B3463D700574211 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -44,6 +43,7 @@
 		8E500C332B34897700574211 /* TVChannelsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVChannelsView.swift; sourceTree = "<group>"; };
 		8E500C372B348B8900574211 /* TVChannelsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVChannelsModel.swift; sourceTree = "<group>"; };
 		8E500C392B34946900574211 /* TVChannelCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVChannelCell.swift; sourceTree = "<group>"; };
+		8EA33EAA2B38A16800759822 /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
 		8EBF89432B375E49004EFE12 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		8EBF89452B376AFC004EFE12 /* Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observer.swift; sourceTree = "<group>"; };
 		8EFA73F42B34A11E00F13FB6 /* TVChannelsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVChannelsController.swift; sourceTree = "<group>"; };
@@ -149,8 +149,8 @@
 		8EBF89422B375920004EFE12 /* UIComponents */ = {
 			isa = PBXGroup;
 			children = (
+				8EA33EAA2B38A16800759822 /* VideoPlayer.swift */,
 				8EFA73FF2B34CC1500F13FB6 /* SegmentsView.swift */,
-				8E1C461C2B388B6D009035E0 /* NavigationView.swift */,
 			);
 			path = UIComponents;
 			sourceTree = "<group>";
@@ -240,6 +240,7 @@
 				8E1C46192B3888BB009035E0 /* TVPlayerController.swift in Sources */,
 				8EFA73F82B34A76F00F13FB6 /* Theme.swift in Sources */,
 				8EBF89462B376AFC004EFE12 /* Observer.swift in Sources */,
+				8EA33EAB2B38A16800759822 /* VideoPlayer.swift in Sources */,
 				8E1C46162B388553009035E0 /* AppCoordinator.swift in Sources */,
 				8E500C2E2B346CC600574211 /* TVChannel.swift in Sources */,
 				8E500C3A2B34946900574211 /* TVChannelCell.swift in Sources */,
@@ -247,7 +248,6 @@
 				8E500C302B346F8900574211 /* TVChannelService.swift in Sources */,
 				8E500C322B347FF700574211 /* NetworkManager.swift in Sources */,
 				8E500C382B348B8900574211 /* TVChannelsModel.swift in Sources */,
-				8E1C461D2B388B6D009035E0 /* NavigationView.swift in Sources */,
 				8E1C461B2B388952009035E0 /* TVPlayerView.swift in Sources */,
 				8E500C342B34897700574211 /* TVChannelsView.swift in Sources */,
 				8E500C152B3463D600574211 /* AppDelegate.swift in Sources */,
@@ -390,8 +390,8 @@
 				INFOPLIST_FILE = TVPlayer/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -417,8 +417,8 @@
 				INFOPLIST_FILE = TVPlayer/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

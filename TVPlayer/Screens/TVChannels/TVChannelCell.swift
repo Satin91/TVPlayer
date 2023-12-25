@@ -12,7 +12,7 @@ final class TVChannelCell: UITableViewCell {
     private let channelImage = UIImageView()
     private let channelNameLabel = UILabel()
     private let currentBroadcastLabel = UILabel()
-    private let labelsStackView = UIStackView(frame: .zero)
+    private let labelsStackView = UIStackView()
     private let favoriteButton = UIButton()
     
     var onTapFavoriteButton: (() -> Void)?

@@ -6,11 +6,12 @@
 //
 
 import UIKit
+import AVKit
 
 protocol CoordinatorBehavior: AnyObject {
     func dismiss()
     func pushToTv()
-    func pushToVideoPlayer()
+    func pushToVideoPlayer(with channel: TVChannel)
 }
 
 class AppCoordinator {
@@ -38,8 +39,8 @@ extension AppCoordinator: CoordinatorBehavior {
         self.navigation.pushViewController(vc, animated: true)
     }
     
-    func pushToVideoPlayer() {
-        let vc = TVPlayerController()
+    func pushToVideoPlayer(with channel: TVChannel) {
+        let vc = TVPlayerController(tvChannel: channel)
         vc.coordinator = self
         self.navigation.pushViewController(vc, animated: true)
     }

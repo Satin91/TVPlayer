@@ -64,7 +64,8 @@ extension TVChannelsController: TVChannelViewActionsDelegate {
     func didTap(on row: Int, on segment: TVChannelsView.SegmentsElement) {
         switch segment {
         case .all:
-            coordinator?.pushToVideoPlayer()
+            let channel = allChannels[row]
+            coordinator?.pushToVideoPlayer(with: channel)
         case .favorites:
             favoriteChannels[row].isFavorite.toggle()
             channels.send(favoriteChannels)

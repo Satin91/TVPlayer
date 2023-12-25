@@ -7,10 +7,17 @@
 
 import UIKit
 
+
 final class TVPlayerController: UIViewController {
     
     var coordinator: CoordinatorBehavior?
     var presentedView = TVPlayerView()
+    var tvChannel: TVChannel!
+    
+    convenience init(tvChannel: TVChannel) {
+        self.init()
+        self.tvChannel = tvChannel
+    }
     
     override func loadView() {
         super.loadView()
@@ -20,6 +27,7 @@ final class TVPlayerController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        presentedView.configure(with: tvChannel)
     }
     
     func setupView() {
