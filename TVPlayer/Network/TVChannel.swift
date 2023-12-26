@@ -11,12 +11,21 @@ struct TVChannelsResponse: Decodable {
     var channels: [TVChannel]
 }
 
-class TVChannel: NSObject, Decodable {
-    @objc dynamic var id: Int
-    @objc dynamic var name: String
-    @objc dynamic var currentBroadcast: Broadcast
-    @objc dynamic var imageURL: URL
-    @objc dynamic var isFavorite: Bool
+class TVChannel: Decodable {
+    var id: Int
+    var name: String
+    var currentBroadcast: Broadcast
+    var imageURL: URL
+    var channelURL: URL
+    var isFavorite: Bool
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case name_ru
+        case current
+        case image
+        case url
+    }
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -24,20 +33,11 @@ class TVChannel: NSObject, Decodable {
         self.name = try container.decode(String.self, forKey: .name_ru)
         self.currentBroadcast = try container.decode(Broadcast.self, forKey: .current)
         self.imageURL = try container.decode(URL.self, forKey: .image)
+        self.channelURL = try container.decode(URL.self, forKey: .url)
         self.isFavorite = false
     }
 }
 
-class Broadcast: NSObject, Decodable {
-    @objc dynamic var title: String
+class Broadcast: Decodable {
+    var title: String
 }
-
-extension TVChannel {
-    enum CodingKeys: String, CodingKey {
-        case id
-        case name_ru
-        case current
-        case image
-    }
-}
-

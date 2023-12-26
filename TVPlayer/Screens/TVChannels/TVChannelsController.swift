@@ -11,9 +11,10 @@ class TVChannelsController: UIViewController {
     let service = TVChannelService()
     var coordinator: CoordinatorBehavior?
     
-    private var tvView = TVChannelsView()
+    private var presentedView = TVChannelsView()
     
     private var allChannels: [TVChannel] = []
+    
     private var favoriteChannels: [TVChannel] {
         allChannels.filter { $0.isFavorite }
     }
@@ -32,12 +33,12 @@ class TVChannelsController: UIViewController {
     }
     
     func subscribe() {
-        channels.bind { [weak self] in self?.tvView.dynamicChannels.value = $0 }
+        channels.bind { [weak self] in self?.presentedView.dynamicChannels.value = $0 }
     }
     
     func setupView() {
-        self.view = tvView
-        self.tvView.actionsDelegate = self
+        self.view = presentedView
+        self.presentedView.actionsDelegate = self
     }
     
     func loadChannels() {

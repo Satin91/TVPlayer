@@ -14,6 +14,7 @@ final class Slider: UIView {
     private var filledLineConstraint = NSLayoutConstraint()
     let gradientlayer = CAGradientLayer()
     let label = UILabel()
+    var frameWidth: CGFloat = 0
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -31,7 +32,7 @@ final class Slider: UIView {
         backgroundColor = Theme.Colors.gray
         lineMask.backgroundColor = Theme.Colors.accent
         gradientlayer.type = .axial
-        gradientlayer.colors = [Theme.Colors.accent!.cgColor, UIColor.white.cgColor]
+        gradientlayer.colors = [Theme.Colors.accent?.cgColor, Theme.Colors.mint?.cgColor]
         gradientlayer.startPoint = CGPoint(x: 0, y: 1)
         gradientlayer.endPoint = CGPoint(x: 1, y: 1)
         lineMask.layer.addSublayer(gradientlayer)
@@ -44,15 +45,30 @@ final class Slider: UIView {
     let mainLabel = UILabel()
     let maskLabel = UILabel()
     
-    @objc private func drag(_ gesture: UIPanGestureRecognizer) {
-        print("change constraint \(lineMask.frame.width)")
-        let velocity = gesture.velocity(in: self)
-        
-        print(filledLineConstraint.constant)
-        if !lineMask.frame.contains(velocity) {
-            filledLineConstraint.constant += velocity.x / 100
+    func sliderDidMove(onChange: @escaping (CGFloat) -> Void) {
+        sliderDidChange = {
+            onChange($0)
         }
     }
+    
+    private var sliderDidChange: ((CGFloat) -> Void)?
+    
+    @objc private func drag(_ gesture: UIPanGestureRecognizer) {
+        let velocity = gesture.velocity(in: self)
+        let minMax = (min: -frameWidth, max: CGFloat(0))
+        let value = filledLineConstraint.constant + (velocity.x / 100)
+        if value < minMax.max, value >= minMax.min {
+            filledLineConstraint.constant = value
+        }
+        
+        if gesture.state == .ended {
+            let sliderValue = (lineMask.frame.width / frame.width) * 100
+            print("Frame width ",sliderValue.rounded())
+            sliderDidChange?(sliderValue)
+        }
+    }
+    
+  
     
     func setupConstraints() {
         lineMask.translatesAutoresizingMaskIntoConstraints = false
@@ -72,5 +88,6 @@ final class Slider: UIView {
         layer.cornerRadius = bounds.height / 2
         lineMask.layer.cornerRadius = lineMask.bounds.height / 2
         lineMask.layer.masksToBounds = true
+        self.frameWidth = bounds.width
     }
 }

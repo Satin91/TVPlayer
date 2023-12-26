@@ -15,6 +15,7 @@ final class TVPlayerController: UIViewController {
     var coordinator: CoordinatorBehavior?
     
     var presentedView = TVPlayerView()
+    
     var tvChannel: TVChannel!
     
     convenience init(tvChannel: TVChannel) {
@@ -44,6 +45,17 @@ final class TVPlayerController: UIViewController {
 }
 
 extension TVPlayerController: TVPlayerViewActionsDelegate {
+    func videoIsLoaded() {
+        
+    }
+    
+    func tapResolution(scale: String) {
+        playerState.send(.loading)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            self.playerState.send(.playing)
+        }
+    }
+    
     func playerTapped() {
         switch playerState.value {
         case .loading:

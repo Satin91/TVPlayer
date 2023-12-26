@@ -14,13 +14,11 @@ class VideoPlayer: UIView {
     private var player = AVPlayer()
     private var playerLayer = AVPlayerLayer()
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-    }
+    var observer: NSKeyValueObservation?
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    private var maxSeconds: Double = 0
+    
+    private var readyToPlay: (() -> Void)?
     
     func configure(with url: URL?) {
         guard let url = url else  {
@@ -31,6 +29,24 @@ class VideoPlayer: UIView {
         player = AVPlayer(url: url)
         playerLayer = .init(player: player)
         layer.addSublayer(playerLayer)
+        subscribe()
+    }
+    
+    
+    func subscribe() {
+        let item = player.currentItem
+        observer = item?.observe(\.status, changeHandler: { [weak self] item, value in
+            if !item.isPlaybackLikelyToKeepUp {
+                self?.maxSeconds = self?.player.currentTime().seconds ?? 0
+                self?.readyToPlay?()
+            }
+        })
+    }
+    
+    func videoLoadingComplete(_ handler: @escaping () -> Void) {
+        readyToPlay = {
+            handler()
+        }
     }
     
     func playVideo() {
@@ -41,10 +57,25 @@ class VideoPlayer: UIView {
         player.pause()
     }
     
+    func changeTimeline(forTime: CGFloat, newTime: (Double) -> Void ) {
+
+        let currentTime = player.currentTime()
+        let scale = currentTime.timescale
+        let rewindTime = self.maxSeconds * Double(forTime) / 100
+        let seekTime = CMTime(seconds: rewindTime, preferredTimescale: scale)
+        
+        player.seek(to: seekTime, toleranceBefore: .zero, toleranceAfter: .zero)
+        let rewTime = maxSeconds - rewindTime
+        newTime(rewTime)
+    }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
-        
         playerLayer.frame = self.bounds
         
+    }
+    
+    deinit {
+        observer?.invalidate()
     }
 }

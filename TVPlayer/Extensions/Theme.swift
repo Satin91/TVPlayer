@@ -16,6 +16,8 @@ enum Theme {
         static let darkGray = UIColor(named: "darkGray")
         static let lightGray = UIColor(named: "lightGray")
         static let divider = UIColor(named: "divider")
+        static let mint = UIColor(named: "mint")
+        static let contextDivider = UIColor(named: "contextDivider")
     }
     
     enum Images {

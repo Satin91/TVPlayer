@@ -30,7 +30,7 @@
         "valid_from": 1664520023
       },
       "foreign_player_key": true,
-      "url": "https://mhd.iptv2022.com/p/ZMRjWS_8WzgwjjQF-N6QDw,1701478156/streaming/1kanalott/324/1/index.m3u8",
+      "url": "https://tv-trt1.medya.trt.com.tr/master_480.m3u8",
       "url_sound": "https://mhd.iptv2022.com/p/ZMRjWS_8WzgwjjQF-N6QDw,1701478156/streaming/1kanalott/324/1/tracks-a1/mono.m3u8",
       "cdn": "https://mhd.iptv2022.com/p/ZMRjWS_8WzgwjjQF-N6QDw,1701478156/streaming/1kanalott/324/1/index.m3u8",
       "url_archive": ""
@@ -65,7 +65,7 @@
         "valid_from": 1664520023
       },
       "foreign_player_key": true,
-      "url": "https://mhd.iptv2022.com/p/Gek9ALvODnZqK4Lpy85OHw,1701478156/streaming/rossia1ott/324/1/index.m3u8",
+      "url": "https://livehlsvgtrk2.cdnvideo.ru/hls2/russia_hd/playlist_6.m3u8?md5=MjxRudZXQnQyWkIxfKkZ3g&e=1703591880&hls_proxy_host=70b013ca21e8364cd537747cf862272b",
       "url_sound": "https://mhd.iptv2022.com/p/Gek9ALvODnZqK4Lpy85OHw,1701478156/streaming/rossia1ott/324/1/tracks-a1/mono.m3u8",
       "cdn": "https://mhd.iptv2022.com/p/Gek9ALvODnZqK4Lpy85OHw,1701478156/streaming/rossia1ott/324/1/index.m3u8",
       "url_archive": ""
@@ -135,7 +135,7 @@
         "valid_from": 1664520023
       },
       "foreign_player_key": true,
-      "url": "https://mhd.iptv2022.com/p/_Jc3PPQ3aDchmT8NU7MCwg,1701478156/streaming/ntvnn/324/1/index.m3u8",
+      "url": "https://cdn.ntv.ru/ntv0_hd/tracks-v3a1/rewind-7150.m3u8",
       "url_sound": "https://mhd.iptv2022.com/p/_Jc3PPQ3aDchmT8NU7MCwg,1701478156/streaming/ntvnn/324/1/tracks-a1/mono.m3u8",
       "cdn": "https://mhd.iptv2022.com/p/_Jc3PPQ3aDchmT8NU7MCwg,1701478156/streaming/ntvnn/324/1/index.m3u8",
       "url_archive": ""
