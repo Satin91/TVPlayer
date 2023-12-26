@@ -16,7 +16,10 @@ class VideoPlayer: UIView {
     
     var observer: NSKeyValueObservation?
     
-    private var maxSeconds: Double = 0
+    var currentTime = Observable(Double(0))
+    
+    
+    private var maxPreviousSecondsBuffer: Double = 0
     
     private var readyToPlay: (() -> Void)?
     
@@ -37,7 +40,7 @@ class VideoPlayer: UIView {
         let item = player.currentItem
         observer = item?.observe(\.status, changeHandler: { [weak self] item, value in
             if !item.isPlaybackLikelyToKeepUp {
-                self?.maxSeconds = self?.player.currentTime().seconds ?? 0
+                self?.maxPreviousSecondsBuffer = self?.player.currentTime().seconds ?? 0
                 self?.readyToPlay?()
             }
         })
@@ -57,16 +60,14 @@ class VideoPlayer: UIView {
         player.pause()
     }
     
-    func changeTimeline(forTime: CGFloat, newTime: (Double) -> Void ) {
-
-        let currentTime = player.currentTime()
-        let scale = currentTime.timescale
-        let rewindTime = self.maxSeconds * Double(forTime) / 100
-        let seekTime = CMTime(seconds: rewindTime, preferredTimescale: scale)
-        
-        player.seek(to: seekTime, toleranceBefore: .zero, toleranceAfter: .zero)
-        let rewTime = maxSeconds - rewindTime
-        newTime(rewTime)
+    func rewind(to value: CGFloat) {
+        let playerTime = player.currentTime()
+        let scale = playerTime.timescale
+        let rewindTime = self.maxPreviousSecondsBuffer * Double(value) / 100
+        let timeForSeek = CMTime(seconds: rewindTime, preferredTimescale: scale)
+        player.seek(to: timeForSeek, toleranceBefore: .zero, toleranceAfter: .zero)
+        let rewindSeconds = maxPreviousSecondsBuffer - rewindTime
+        self.currentTime.send(rewindSeconds)
     }
     
     override func layoutSubviews() {

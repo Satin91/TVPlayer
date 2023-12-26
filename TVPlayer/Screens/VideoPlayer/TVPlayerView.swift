@@ -27,7 +27,7 @@ final class TVPlayerView: UIView {
         static let largePadding: CGFloat = 24
         static let playImageSide: CGFloat = 120
         
-        static let panelVisibilityTimerValue: CGFloat = 2.0
+        static let timerHidingPanelValue: CGFloat = 2.0
         
         static let liveBroadcastText = "Прямой эфир"
     }
@@ -53,7 +53,10 @@ final class TVPlayerView: UIView {
     let resolutions = ["1080p", "720p", "480p", "AUTO"]
     let contextMenu = ContextMenu(elements: ["1080p","720p", "480p", "AUTO"])
     var playerState: Observable<TVPlayerModel.PlayerState> = .init(.pause)
+    
+    private var timerHidingPanel: Timer?
     private var isPanelVisible = Observable(true)
+    private var isPlayButtonVisible = Observable(true)
     
     weak var actionsDelegate: TVPlayerViewActionsDelegate?
     
@@ -65,7 +68,6 @@ final class TVPlayerView: UIView {
     
     var channel: TVChannel?
     
-    private var timer: Timer?
     
     func configure(with channel: TVChannel) {
         self.channel = channel
@@ -100,19 +102,24 @@ final class TVPlayerView: UIView {
             }
         }
         
+        videoPlayer.currentTime.subscribe { seconds in
+            self.timelineLabel.text = seconds > 0 ? "-" + seconds.stringSecondsFormat() : Constants.liveBroadcastText
+        }
+        
         isPanelVisible.subscribe { [unowned self] visible in
             visible ? showPanel() : hidePanel()
         }
         
+        isPlayButtonVisible.subscribe { [unowned self] visible in
+            visible ? showImageWithAnimate() : hideImageWithAnimate()
+        }
+        
         timeline.sliderDidMove { [weak self] _ in
-            self?.timer?.invalidate()
+            self?.timerHidingPanel?.invalidate()
         }
         
         timeline.sliderDidEndMove { [weak self] value in
-            self?.videoPlayer.changeTimeline(forTime: value) { [weak self] time in
-                self?.timelineLabel.text = time > 0 ? "-" + time.stringSecondsFormat() : Constants.liveBroadcastText
-                
-            }
+            self?.videoPlayer.rewind(to: value)
         }
         
         videoPlayer.videoLoadingComplete { [weak self] in
@@ -134,18 +141,18 @@ final class TVPlayerView: UIView {
     
     private func playingState() {
         videoPlayer.isHidden = false
-        hideImageWithAnimate()
+        isPlayButtonVisible.send(false)
         activityIndicator.isHidden = true
-        timer = Timer.scheduledTimer(withTimeInterval: Constants.panelVisibilityTimerValue, repeats: false) { timer in
+        timerHidingPanel = Timer.scheduledTimer(withTimeInterval: Constants.timerHidingPanelValue, repeats: false) { timer in
             self.isPanelVisible.send(false)
         }
         videoPlayer.playVideo()
     }
     
     private func pauseState() {
-        timer?.invalidate()
+        timerHidingPanel?.invalidate()
         showPanel()
-        showImageWithAnimate()
+        isPlayButtonVisible.send(true)
         videoPlayer.pauseVideo()
     }
     
