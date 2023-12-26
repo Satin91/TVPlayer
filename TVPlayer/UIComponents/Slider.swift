@@ -45,30 +45,36 @@ final class Slider: UIView {
     let mainLabel = UILabel()
     let maskLabel = UILabel()
     
+    func sliderDidEndMove(_ handler: @escaping (CGFloat) -> Void) {
+        sliderDidEndMoveClosure = {
+            handler($0)
+        }
+    }
+    
     func sliderDidMove(onChange: @escaping (CGFloat) -> Void) {
-        sliderDidChange = {
+        sliderDidMoveClosure = {
             onChange($0)
         }
     }
     
-    private var sliderDidChange: ((CGFloat) -> Void)?
+    private var sliderDidMoveClosure: ((CGFloat) -> Void)?
+    private var sliderDidEndMoveClosure: ((CGFloat) -> Void)?
     
     @objc private func drag(_ gesture: UIPanGestureRecognizer) {
         let velocity = gesture.velocity(in: self)
         let minMax = (min: -frameWidth, max: CGFloat(0))
-        let value = filledLineConstraint.constant + (velocity.x / 100)
-        if value < minMax.max, value >= minMax.min {
-            filledLineConstraint.constant = value
+        let constraintValue = filledLineConstraint.constant + (velocity.x / 100)
+        
+        let sliderValue = (lineMask.frame.width / frame.width) * 100
+        if constraintValue < minMax.max, constraintValue >= minMax.min {
+            filledLineConstraint.constant = constraintValue
+            sliderDidMoveClosure?(sliderValue)
         }
         
         if gesture.state == .ended {
-            let sliderValue = (lineMask.frame.width / frame.width) * 100
-            print("Frame width ",sliderValue.rounded())
-            sliderDidChange?(sliderValue)
+            sliderDidEndMoveClosure?(sliderValue)
         }
     }
-    
-  
     
     func setupConstraints() {
         lineMask.translatesAutoresizingMaskIntoConstraints = false

@@ -27,6 +27,8 @@ final class TVPlayerView: UIView {
         static let largePadding: CGFloat = 24
         static let playImageSide: CGFloat = 120
         
+        static let panelVisibilityTimerValue: CGFloat = 2.0
+        
         static let liveBroadcastText = "Прямой эфир"
     }
     
@@ -51,6 +53,7 @@ final class TVPlayerView: UIView {
     let resolutions = ["1080p", "720p", "480p", "AUTO"]
     let contextMenu = ContextMenu(elements: ["1080p","720p", "480p", "AUTO"])
     var playerState: Observable<TVPlayerModel.PlayerState> = .init(.pause)
+    private var isPanelVisible = Observable(true)
     
     weak var actionsDelegate: TVPlayerViewActionsDelegate?
     
@@ -58,6 +61,7 @@ final class TVPlayerView: UIView {
     private var bottomContainerConstraint = NSLayoutConstraint()
     
     private var videoPlayer = VideoPlayer()
+    private let activityIndicator = UIActivityIndicatorView()
     
     var channel: TVChannel?
     
@@ -96,9 +100,18 @@ final class TVPlayerView: UIView {
             }
         }
         
-        timeline.sliderDidMove { [weak self] value in
+        isPanelVisible.subscribe { [unowned self] visible in
+            visible ? showPanel() : hidePanel()
+        }
+        
+        timeline.sliderDidMove { [weak self] _ in
+            self?.timer?.invalidate()
+        }
+        
+        timeline.sliderDidEndMove { [weak self] value in
             self?.videoPlayer.changeTimeline(forTime: value) { [weak self] time in
-                self?.changeTimeLineLabel(with: time)
+                self?.timelineLabel.text = time > 0 ? "-" + time.stringSecondsFormat() : Constants.liveBroadcastText
+                
             }
         }
         
@@ -112,19 +125,9 @@ final class TVPlayerView: UIView {
             self?.contextMenu.hide()
         }
     }
- 
-    private func changeTimeLineLabel(with seconds: Double) {
-        guard seconds > 1 else {
-            timelineLabel.text = Constants.liveBroadcastText
-            return
-        }
-        let formatter = DateComponentsFormatter()
-        formatter.allowedUnits = [.day, .hour,.minute,.second]
-        let stringValue = formatter.string(from: seconds) ?? ""
-        timelineLabel.text = "-" + stringValue
-    }
     
     private func loadingState() {
+        activityIndicator.isHidden = false
         videoPlayer.isHidden = true
         videoPlayer.pauseVideo()
     }
@@ -132,14 +135,15 @@ final class TVPlayerView: UIView {
     private func playingState() {
         videoPlayer.isHidden = false
         hideImageWithAnimate()
-//        timer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { timer in
-//            self.hideTopContainer()
-//        }
+        activityIndicator.isHidden = true
+        timer = Timer.scheduledTimer(withTimeInterval: Constants.panelVisibilityTimerValue, repeats: false) { timer in
+            self.isPanelVisible.send(false)
+        }
         videoPlayer.playVideo()
     }
     
     private func pauseState() {
-//        timer?.invalidate()
+        timer?.invalidate()
         showPanel()
         showImageWithAnimate()
         videoPlayer.pauseVideo()
@@ -166,26 +170,27 @@ final class TVPlayerView: UIView {
         }
     }
     
-    private func hideTopContainer() {
+    private func hidePanel(_ delay: CGFloat = 0) {
         self.topContainerConstraint.constant = 0
+        self.bottomContainerConstraint.constant = 0
+        
         UIView.animate(withDuration: 0.3) {
             self.topContainer.layer.opacity = 0
+            self.bottomContainer.layer.opacity = 0
             self.layoutIfNeeded()
         }
     }
-    
     
     private func showPanel() {
-        showTopContainer()
-    }
-    private func showTopContainer() {
         self.topContainerConstraint.constant = Constants.topPadding
+        self.bottomContainerConstraint.constant = -Constants.bottomPadding
         UIView.animate(withDuration: 0.3) {
             self.topContainer.layer.opacity = 1
+            self.bottomContainer.layer.opacity = 1
             self.layoutIfNeeded()
         }
     }
-    
+
     private func hideImageWithAnimate() {
         UIView.animate(withDuration: 0.05) {
             self.playImageView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
@@ -211,6 +216,7 @@ final class TVPlayerView: UIView {
 extension TVPlayerView {
     private func setupView() {
         addSubview(videoPlayer)
+        addSubview(activityIndicator)
         addSubview(topContainer)
         addSubview(bottomContainer)
         addSubview(playImageView)
@@ -219,6 +225,8 @@ extension TVPlayerView {
         topContainer.addSubview(backButton)
         topContainer.addSubview(channelImage)
         topContainer.addSubview(topLabelsStackView)
+        
+        activityIndicator.startAnimating()
         
         topLabelsStackView.addArrangedSubview(broadcastLabel)
         topLabelsStackView.addArrangedSubview(channelNameLabel)
@@ -266,6 +274,7 @@ extension TVPlayerView {
         backButton.translatesAutoresizingMaskIntoConstraints = false
         topLabelsStackView.translatesAutoresizingMaskIntoConstraints = false
         videoPlayer.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         playImageView.translatesAutoresizingMaskIntoConstraints = false
         bottomContainer.translatesAutoresizingMaskIntoConstraints = false
         timeline.translatesAutoresizingMaskIntoConstraints = false
@@ -307,6 +316,12 @@ extension TVPlayerView {
             videoPlayer.trailingAnchor.constraint(equalTo: trailingAnchor),
             videoPlayer.bottomAnchor.constraint(equalTo: bottomAnchor),
             
+            // Activity indicator
+            activityIndicator.widthAnchor.constraint(equalToConstant: 44),
+            activityIndicator.heightAnchor.constraint(equalTo: activityIndicator.widthAnchor),
+            activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: centerYAnchor),
+            
             // PlayImage
             playImageView.widthAnchor.constraint(equalToConstant: Constants.playImageSide),
             playImageView.heightAnchor.constraint(equalTo: playImageView.widthAnchor),
@@ -343,4 +358,3 @@ extension TVPlayerView {
         ])
     }
 }
-
