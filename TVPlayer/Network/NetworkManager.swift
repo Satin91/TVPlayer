@@ -7,7 +7,11 @@
 
 import Foundation
 
-final class NetworkManager {
+protocol NetworkManagerProtocol {
+    func parse<T: Decodable>(responseOf: T.Type, completion: (T) -> Void )
+}
+
+final class NetworkManager: NetworkManagerProtocol {
     let decoder = JSONDecoder()
     
     func parse<T: Decodable>(responseOf: T.Type, completion: (T) -> Void ) {

@@ -8,7 +8,7 @@
 import UIKit
 import AVKit
 
-protocol CoordinatorBehavior: AnyObject {
+protocol AppCoordinatorProtocol: AnyObject {
     func dismiss()
     func pushToTv()
     func pushToVideoPlayer(with channel: TVChannel)
@@ -17,6 +17,7 @@ protocol CoordinatorBehavior: AnyObject {
 class AppCoordinator {
     var navigation: UINavigationController
     var root: UIViewController?
+    let container = DependencyContainer()
     
     init(navigation: UINavigationController) {
         self.navigation = navigation
@@ -28,20 +29,18 @@ class AppCoordinator {
     }
 }
 
-extension AppCoordinator: CoordinatorBehavior {
+extension AppCoordinator: AppCoordinatorProtocol {
     func dismiss() {
         self.navigation.popToRootViewController(animated: true)
     }
     
     func pushToTv() {
-        let vc = TVChannelsController()
-        vc.coordinator = self
+        let vc = container.makeTvChannelsController(coordinator: self)
         self.navigation.pushViewController(vc, animated: true)
     }
     
     func pushToVideoPlayer(with channel: TVChannel) {
-        let vc = TVPlayerController(tvChannel: channel)
-        vc.coordinator = self
+        let vc = container.makeTVPlayerController(coordinator: self, channel: channel)
         self.navigation.pushViewController(vc, animated: true)
     }
 }

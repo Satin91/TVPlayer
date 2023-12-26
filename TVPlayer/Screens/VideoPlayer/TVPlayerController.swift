@@ -12,7 +12,7 @@ final class TVPlayerController: UIViewController {
     
     var playerState = Observable(TVPlayerModel.PlayerState.playing)
     
-    var coordinator: CoordinatorBehavior?
+    var coordinator: AppCoordinatorProtocol?
     
     var presentedView = TVPlayerView()
     

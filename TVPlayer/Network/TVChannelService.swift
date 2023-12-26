@@ -7,11 +7,19 @@
 
 import Foundation
 
-final class TVChannelService {
-    let networkManager = NetworkManager()
+protocol TVChannelServiceProtocol {
+    func getChannels(completion: @escaping ([TVChannel]) -> Void)
+}
+
+final class TVChannelService: TVChannelServiceProtocol {
+    let manager: NetworkManagerProtocol
+    
+    init(manager: NetworkManagerProtocol) {
+        self.manager = manager
+    }
     
     func getChannels(completion: @escaping ([TVChannel]) -> Void) {
-        networkManager.parse(responseOf: TVChannelsResponse.self) { response in
+        manager.parse(responseOf: TVChannelsResponse.self) { response in
             completion(response.channels)
         }
     }

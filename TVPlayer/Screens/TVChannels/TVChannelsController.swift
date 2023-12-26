@@ -8,8 +8,9 @@
 import UIKit
 
 class TVChannelsController: UIViewController {
-    let service = TVChannelService()
-    var coordinator: CoordinatorBehavior?
+    
+    var coordinator: AppCoordinatorProtocol?
+    var service: TVChannelServiceProtocol?
     
     private var presentedView = TVChannelsView()
     
@@ -42,7 +43,7 @@ class TVChannelsController: UIViewController {
     }
     
     func loadChannels() {
-        service.getChannels { channels in
+        service?.getChannels { channels in
             self.allChannels = channels
             self.channels.value = channels
         }
