@@ -30,7 +30,7 @@
         "valid_from": 1664520023
       },
       "foreign_player_key": true,
-      "url": "https://tv-trt1.medya.trt.com.tr/master_480.m3u8",
+      "url": "https://mobdrm.1tv.ru/hls-live3/streams/1tv-dvr/1tv-4h5.m3u8?cdn=https://cdn11.1internet.tv&netprav=/hls-vod2/streams/1tv/internet-not-allowed-,350,950,3800,.mp4.urlset/master.m3u8&e=1703623562&s=K6C6wOMjPHT19bnOSRi5Y62q9RiUkBD0h7iOQcC4kXgqMdn%2FxWZ9DcHTIJjLAz9yl4EIiADYd5LX%2FWNIjcV0g4RxTS%2BK%2BxyPdE8GHvAEYkX80Y067TpevAHe2R46%2FpxXAI0AFC9VjDwvF0uir6uGzsw%2Be0vDmxf7rUAi0loSq4xR3IPUnfUpBdMhuECppQfx4SUyHycRdhSYmTgzm3g%2FKVKlxt%2FnFGlQsChH4FR6tlI%3D",
       "url_sound": "https://mhd.iptv2022.com/p/ZMRjWS_8WzgwjjQF-N6QDw,1701478156/streaming/1kanalott/324/1/tracks-a1/mono.m3u8",
       "cdn": "https://mhd.iptv2022.com/p/ZMRjWS_8WzgwjjQF-N6QDw,1701478156/streaming/1kanalott/324/1/index.m3u8",
       "url_archive": ""

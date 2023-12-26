@@ -10,7 +10,7 @@ import UIKit
 
 final class TVPlayerController: UIViewController {
     
-    var playerState = Observable(TVPlayerModel.PlayerState.pause)
+    var playerState = Observable(TVPlayerModel.PlayerState.playing)
     
     var coordinator: CoordinatorBehavior?
     
@@ -50,9 +50,10 @@ extension TVPlayerController: TVPlayerViewActionsDelegate {
     }
     
     func tapResolution(scale: String) {
+        let previousState = playerState.value
         playerState.send(.loading)
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.playerState.send(.playing)
+            self.playerState.send(previousState)
         }
     }
     
