@@ -20,9 +20,9 @@ final class DependencyContainer {
     
     func makeTvChannelsController(coordinator: AppCoordinator) -> TVChannelsController {
         let controller = TVChannelsController()
+        let model = TVChannelsModel(networkService: tvChannelNetworkService, storageService: tvChannelStorageService)
         controller.coordinator = coordinator
-        controller.networkService = tvChannelNetworkService
-        controller.storageService = tvChannelStorageService
+        controller.model = model
         return controller
     }
     

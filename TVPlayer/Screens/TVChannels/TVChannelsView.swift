@@ -8,10 +8,10 @@
 import UIKit
 
 protocol TVChannelViewActionsDelegate: AnyObject {
-    func didTap(on row: Int, on segment: TVChannelsModel.SegmentsElement)
+    func didTap(on channel: TVChannel)
     func segmentDidChange(to: TVChannelsModel.SegmentsElement)
-    func tapFavorite(on row: Int, on segment: TVChannelsModel.SegmentsElement)
-    func searchChannel(by text: String, on segment: TVChannelsModel.SegmentsElement)
+    func tapFavorite(channel: TVChannel)
+    func searchChannel(by text: String)
 }
 
 class TVChannelsView: UIView {
@@ -49,7 +49,7 @@ class TVChannelsView: UIView {
         }
         
         searchBar.searchText.subscribe { [unowned self] text in
-            actionsDelegate?.searchChannel(by: text, on: currentSegment)
+            actionsDelegate?.searchChannel(by: text)
         }
         
         dynamicChannels.subscribe { channels in
@@ -65,7 +65,8 @@ class TVChannelsView: UIView {
 
 extension TVChannelsView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        actionsDelegate?.didTap(on: indexPath.row, on: currentSegment)
+        let channel = dynamicChannels.value[indexPath.row]
+        actionsDelegate?.didTap(on: channel)
     }
 }
 
@@ -78,7 +79,7 @@ extension TVChannelsView: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: Constants.cellID, for: indexPath) as! TVChannelCell
         let item = dynamicChannels.value[indexPath.row]
         cell.onTapFavoriteButton = { [unowned self] in
-            actionsDelegate?.tapFavorite(on: indexPath.row, on: currentSegment)
+            actionsDelegate?.tapFavorite(channel: item)
         }
         cell.configureCell(with: item)
         return cell

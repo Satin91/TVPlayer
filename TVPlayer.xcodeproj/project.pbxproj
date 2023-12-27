@@ -116,6 +116,7 @@
 				8E500C282B3468C300574211 /* App */,
 				8E500C292B3468D100574211 /* Network */,
 				8E8A06C52B3B7C470045E8F2 /* Database */,
+				8EE2BCBD2B3C4BD800F16F4C /* Models */,
 				8E500C2A2B3468DE00574211 /* Screens */,
 				8EFA73F62B34A73300F13FB6 /* Extensions */,
 				8E8A06C22B3B55B20045E8F2 /* Helpers */,
@@ -143,7 +144,6 @@
 			isa = PBXGroup;
 			children = (
 				8E500C312B347FF700574211 /* NetworkManager.swift */,
-				8E500C2D2B346CC600574211 /* TVChannel.swift */,
 				8E500C2F2B346F8900574211 /* TVChannelNetworkService.swift */,
 				8E500C2B2B34699200574211 /* response.json */,
 			);
@@ -205,6 +205,14 @@
 				8EFA73F72B34A76F00F13FB6 /* Theme.swift */,
 			);
 			path = Constants;
+			sourceTree = "<group>";
+		};
+		8EE2BCBD2B3C4BD800F16F4C /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				8E500C2D2B346CC600574211 /* TVChannel.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		8EFA73F62B34A73300F13FB6 /* Extensions */ = {
