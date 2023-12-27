@@ -12,30 +12,22 @@ final class TVPlayerController: UIViewController {
     
     var coordinator: AppCoordinatorProtocol?
     var presentedView = TVPlayerView()
-    
-    var playerState = Observable(TVPlayerModel.PlayerState.playing)
-    var tvChannel: TVChannel?
-    
-    convenience init(tvChannel: TVChannel) {
-        self.init()
-        self.tvChannel = tvChannel
-    }
+    var model: TVPlayerModel!
     
     override func loadView() {
         super.loadView()
         self.view = presentedView
-        guard let tvChannel else { return }
-        presentedView.configure(with: tvChannel)
+        presentedView.configure(with: model.tvChannel!)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        subscribe()
+        bind()
     }
     
-    func subscribe() {
-        playerState.bind { [weak self] in self?.presentedView.playerState.send($0) }
+    func bind() {
+        model.playerState.bind { [weak self] in self?.presentedView.playerState.send($0) }
     }
     
     func setupView() {
@@ -50,28 +42,30 @@ extension TVPlayerController: TVPlayerViewActionsDelegate {
     
     func tapResolution(scale: String) {
         // imitation of resolution change
-        let previousState = playerState.value
-        playerState.send(.loading)
+        let previousState = model.playerState.value
+        
+        model.playerState.send(.loading)
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.playerState.send(previousState)
+            self.model.playerState.send(previousState)
         }
     }
     
     func playerTapped() {
-        switch playerState.value {
+        
+        switch model.playerState.value {
         case .loading:
             break
         case .playing:
-            playerState.send(.pause)
+            model.playerState.send(.pause)
         case .pause:
-            playerState.send(.playing)
+            model.playerState.send(.playing)
         case .stop:
             break
         }
     }
     
     func navigationBackButtonTap() {
-        playerState.send(.stop)
+        model.playerState.send(.stop)
         coordinator?.dismiss()
     }
 }

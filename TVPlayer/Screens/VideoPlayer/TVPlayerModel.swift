@@ -14,4 +14,19 @@ class TVPlayerModel {
         case pause
         case stop
     }
+    var tvChannel: TVChannel?
+    var playerState = Observable(TVPlayerModel.PlayerState.playing)
+    
+    init(tvChannel: TVChannel? = nil) {
+        self.tvChannel = tvChannel
+    }
+    
+    func setPlayerState(_ to: PlayerState) {
+        self.playerState.send(to)
+    }
+    
+    func changeResolution(scale: String) {
+        
+    }
+    
 }
