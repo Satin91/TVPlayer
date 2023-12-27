@@ -64,6 +64,7 @@ final class TVChannelsModel {
             channels.send(allChannels)
         case .favorites:
             removeFavorite(channel)
+            allChannels.first(where: { $0.name == channel.name })?.isFavorite.toggle()
             channels.send(favoriteChannels)
         }
     }
@@ -89,8 +90,10 @@ final class TVChannelsModel {
     }
     
     func removeFavorite(_ channel: TVChannel) {
-        let index = favoriteChannels.firstIndex(where: { $0.name == channel.name })
-        favoriteChannels.remove(at: index!)
+        guard let index = favoriteChannels.firstIndex(where: { $0.name == channel.name }) else {
+            return
+        }
+        favoriteChannels.remove(at: index)
         storageService.remove(with: channel.id)
     }
 }
