@@ -38,5 +38,4 @@ final class NetworkManager: NetworkManagerProtocol {
         }
         return nil
     }
-    
 }

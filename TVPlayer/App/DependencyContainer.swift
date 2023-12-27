@@ -14,7 +14,7 @@ final class DependencyContainer {
     let tvChannelStorageService: TVChannelsStorageServiceProtocol
     
     init() {
-        tvChannelNetworkService = TVChannelService(manager: networkManager)
+        tvChannelNetworkService = TVChannelNetworkService(manager: networkManager)
         tvChannelStorageService = TVChannelsStorageService(manager: storageManager, context: storageManager.context)
     }
     

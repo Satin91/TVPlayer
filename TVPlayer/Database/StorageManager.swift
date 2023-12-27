@@ -19,9 +19,8 @@ protocol StorageManagerProtocol {
 }
 
 public final class StorageManager: NSObject {
-    private var appDelegate: AppDelegate {
-        UIApplication.shared.delegate as! AppDelegate
-    }
+    
+    var entityName = ""
     
     private let container: NSPersistentContainer = {
        let container = NSPersistentContainer(name: "TVChannelCoreDataModel")
@@ -37,14 +36,10 @@ public final class StorageManager: NSObject {
         container.viewContext
     }
     
-    var entityName = ""
-    
     convenience init(entityName: String) {
         self.init()
         self.entityName = entityName
     }
-    
-    
     
     func saveContext() {
         if context.hasChanges {

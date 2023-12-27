@@ -16,9 +16,7 @@ class TVChannelsController: UIViewController {
     private var presentedView = TVChannelsView()
     
     private var allChannels: [TVChannel] = []
-    
     private var favoriteChannels: [TVChannel] = []
-    
     private var channels = Observable<[TVChannel]>([])
     
     override func loadView() {
@@ -69,7 +67,7 @@ class TVChannelsController: UIViewController {
 }
 
 extension TVChannelsController: TVChannelViewActionsDelegate {
-    func searchChannel(by text: String, on segment: TVChannelsView.SegmentsElement) {
+    func searchChannel(by text: String, on segment: TVChannelsModel.SegmentsElement) {
         if text == "" {
             channels.send(segment == .all ? allChannels : favoriteChannels)
         } else {
@@ -81,7 +79,7 @@ extension TVChannelsController: TVChannelViewActionsDelegate {
         }
     }
     
-    func tapFavorite(on row: Int, on segment: TVChannelsView.SegmentsElement) {
+    func tapFavorite(on row: Int, on segment: TVChannelsModel.SegmentsElement) {
         switch segment {
         case .all:
             let channel = allChannels[row]
@@ -100,7 +98,7 @@ extension TVChannelsController: TVChannelViewActionsDelegate {
         }
     }
     
-    func didTap(on row: Int, on segment: TVChannelsView.SegmentsElement) {
+    func didTap(on row: Int, on segment: TVChannelsModel.SegmentsElement) {
         switch segment {
             
         case .all:
@@ -114,7 +112,7 @@ extension TVChannelsController: TVChannelViewActionsDelegate {
         }
     }
     
-    func segmentDidChange(to: TVChannelsView.SegmentsElement) {
+    func segmentDidChange(to: TVChannelsModel.SegmentsElement) {
         switch to {
         case .all:
             channels.send(allChannels)

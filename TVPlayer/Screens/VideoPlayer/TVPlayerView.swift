@@ -105,7 +105,7 @@ final class TVPlayerView: UIView {
         }
         
         videoPlayer.currentTime.subscribe { seconds in
-            self.timelineLabel.text = seconds > 0 ? "-" + seconds.stringSecondsFormat() : Constants.liveBroadcastText
+            self.timelineLabel.text = seconds > 10 ? "-" + seconds.stringSecondsFormat() : Constants.liveBroadcastText
         }
         
         isVideoLoading.subscribe { isLoading in

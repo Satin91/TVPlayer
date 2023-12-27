@@ -13,7 +13,7 @@
 		8E500C152B3463D600574211 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E500C142B3463D600574211 /* AppDelegate.swift */; };
 		8E500C2C2B34699200574211 /* response.json in Resources */ = {isa = PBXBuildFile; fileRef = 8E500C2B2B34699200574211 /* response.json */; };
 		8E500C2E2B346CC600574211 /* TVChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E500C2D2B346CC600574211 /* TVChannel.swift */; };
-		8E500C302B346F8900574211 /* TVChannelService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E500C2F2B346F8900574211 /* TVChannelService.swift */; };
+		8E500C302B346F8900574211 /* TVChannelNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E500C2F2B346F8900574211 /* TVChannelNetworkService.swift */; };
 		8E500C322B347FF700574211 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E500C312B347FF700574211 /* NetworkManager.swift */; };
 		8E500C342B34897700574211 /* TVChannelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E500C332B34897700574211 /* TVChannelsView.swift */; };
 		8E500C382B348B8900574211 /* TVChannelsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E500C372B348B8900574211 /* TVChannelsModel.swift */; };
@@ -28,7 +28,7 @@
 		8E8A06EA2B3B9D9F0045E8F2 /* TVChannelsStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E8A06E92B3B9D9F0045E8F2 /* TVChannelsStorageService.swift */; };
 		8EA33EAB2B38A16800759822 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA33EAA2B38A16800759822 /* VideoPlayer.swift */; };
 		8EBF89442B375E49004EFE12 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8EBF89432B375E49004EFE12 /* Images.xcassets */; };
-		8EBF89462B376AFC004EFE12 /* Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EBF89452B376AFC004EFE12 /* Observer.swift */; };
+		8EBF89462B376AFC004EFE12 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EBF89452B376AFC004EFE12 /* Observable.swift */; };
 		8EE2BCB92B3C35AD00F16F4C /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EE2BCB82B3C35AD00F16F4C /* SearchBar.swift */; };
 		8EFA73F52B34A11E00F13FB6 /* TVChannelsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFA73F42B34A11E00F13FB6 /* TVChannelsController.swift */; };
 		8EFA73F82B34A76F00F13FB6 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFA73F72B34A76F00F13FB6 /* Theme.swift */; };
@@ -47,7 +47,7 @@
 		8E500C222B3463D700574211 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8E500C2B2B34699200574211 /* response.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = response.json; sourceTree = "<group>"; };
 		8E500C2D2B346CC600574211 /* TVChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVChannel.swift; sourceTree = "<group>"; };
-		8E500C2F2B346F8900574211 /* TVChannelService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVChannelService.swift; sourceTree = "<group>"; };
+		8E500C2F2B346F8900574211 /* TVChannelNetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVChannelNetworkService.swift; sourceTree = "<group>"; };
 		8E500C312B347FF700574211 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		8E500C332B34897700574211 /* TVChannelsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVChannelsView.swift; sourceTree = "<group>"; };
 		8E500C372B348B8900574211 /* TVChannelsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVChannelsModel.swift; sourceTree = "<group>"; };
@@ -62,7 +62,7 @@
 		8E8A06E92B3B9D9F0045E8F2 /* TVChannelsStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVChannelsStorageService.swift; sourceTree = "<group>"; };
 		8EA33EAA2B38A16800759822 /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
 		8EBF89432B375E49004EFE12 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		8EBF89452B376AFC004EFE12 /* Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observer.swift; sourceTree = "<group>"; };
+		8EBF89452B376AFC004EFE12 /* Observable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
 		8EE2BCB82B3C35AD00F16F4C /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		8EFA73F42B34A11E00F13FB6 /* TVChannelsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVChannelsController.swift; sourceTree = "<group>"; };
 		8EFA73F72B34A76F00F13FB6 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
@@ -119,6 +119,7 @@
 				8E500C2A2B3468DE00574211 /* Screens */,
 				8EFA73F62B34A73300F13FB6 /* Extensions */,
 				8E8A06C22B3B55B20045E8F2 /* Helpers */,
+				8EE2BCBC2B3C49D400F16F4C /* Constants */,
 				8EBF89422B375920004EFE12 /* UIComponents */,
 				8EFA73F92B34A82B00F13FB6 /* Colors.xcassets */,
 				8EBF89432B375E49004EFE12 /* Images.xcassets */,
@@ -143,7 +144,7 @@
 			children = (
 				8E500C312B347FF700574211 /* NetworkManager.swift */,
 				8E500C2D2B346CC600574211 /* TVChannel.swift */,
-				8E500C2F2B346F8900574211 /* TVChannelService.swift */,
+				8E500C2F2B346F8900574211 /* TVChannelNetworkService.swift */,
 				8E500C2B2B34699200574211 /* response.json */,
 			);
 			path = Network;
@@ -172,7 +173,7 @@
 		8E8A06C22B3B55B20045E8F2 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				8EBF89452B376AFC004EFE12 /* Observer.swift */,
+				8EBF89452B376AFC004EFE12 /* Observable.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -198,10 +199,17 @@
 			path = UIComponents;
 			sourceTree = "<group>";
 		};
-		8EFA73F62B34A73300F13FB6 /* Extensions */ = {
+		8EE2BCBC2B3C49D400F16F4C /* Constants */ = {
 			isa = PBXGroup;
 			children = (
 				8EFA73F72B34A76F00F13FB6 /* Theme.swift */,
+			);
+			path = Constants;
+			sourceTree = "<group>";
+		};
+		8EFA73F62B34A73300F13FB6 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
 				8EFA73FD2B34B47F00F13FB6 /* ImageView.swift */,
 				8E8A06C02B3B55710045E8F2 /* Double.swift */,
 			);
@@ -282,7 +290,7 @@
 			files = (
 				8E1C46192B3888BB009035E0 /* TVPlayerController.swift in Sources */,
 				8EFA73F82B34A76F00F13FB6 /* Theme.swift in Sources */,
-				8EBF89462B376AFC004EFE12 /* Observer.swift in Sources */,
+				8EBF89462B376AFC004EFE12 /* Observable.swift in Sources */,
 				8EA33EAB2B38A16800759822 /* VideoPlayer.swift in Sources */,
 				8E61B3492B3A195500B1EF6E /* Slider.swift in Sources */,
 				8E8A06C42B3B751A0045E8F2 /* DependencyContainer.swift in Sources */,
@@ -291,7 +299,7 @@
 				8E500C3A2B34946900574211 /* TVChannelCell.swift in Sources */,
 				8E8A06BF2B3B17E50045E8F2 /* ContextMenu.swift in Sources */,
 				8EFA73FE2B34B47F00F13FB6 /* ImageView.swift in Sources */,
-				8E500C302B346F8900574211 /* TVChannelService.swift in Sources */,
+				8E500C302B346F8900574211 /* TVChannelNetworkService.swift in Sources */,
 				8E8A06C72B3B7C570045E8F2 /* StorageManager.swift in Sources */,
 				8E8A06EA2B3B9D9F0045E8F2 /* TVChannelsStorageService.swift in Sources */,
 				8E500C322B347FF700574211 /* NetworkManager.swift in Sources */,

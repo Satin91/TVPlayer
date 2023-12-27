@@ -8,26 +8,27 @@
 import UIKit
 
 protocol TVChannelViewActionsDelegate: AnyObject {
-    func didTap(on row: Int, on segment: TVChannelsView.SegmentsElement)
-    func segmentDidChange(to: TVChannelsView.SegmentsElement)
-    func tapFavorite(on row: Int, on segment: TVChannelsView.SegmentsElement)
-    func searchChannel(by text: String, on segment: TVChannelsView.SegmentsElement)
+    func didTap(on row: Int, on segment: TVChannelsModel.SegmentsElement)
+    func segmentDidChange(to: TVChannelsModel.SegmentsElement)
+    func tapFavorite(on row: Int, on segment: TVChannelsModel.SegmentsElement)
+    func searchChannel(by text: String, on segment: TVChannelsModel.SegmentsElement)
 }
 
 class TVChannelsView: UIView {
     private let tableView = UITableView(frame: .zero)
     private let navigationView = UIView()
-    private let segmentsView = SegmentsView(segments: [SegmentsElement.all.rawValue, SegmentsElement.favorites.rawValue])
+    private let segmentsView = SegmentsView(
+        segments: [
+            TVChannelsModel.SegmentsElement.all.rawValue,
+            TVChannelsModel.SegmentsElement.favorites.rawValue]
+    )
     private let divider = UIView()
     private let searchBar = SearchBar()
-    
-    private var currentSegment: SegmentsElement = .all
+    private var currentSegment: TVChannelsModel.SegmentsElement = .all
     
     weak var actionsDelegate: TVChannelViewActionsDelegate?
     
     var dynamicChannels = Observable<[TVChannel]>([])
-    
-    private var viewState: Bool = false
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -43,7 +44,7 @@ class TVChannelsView: UIView {
     
     func subscribe() {
         segmentsView.onTapSegment { [unowned self] segment in
-            currentSegment = SegmentsElement.allCases[segment]
+            currentSegment = TVChannelsModel.SegmentsElement.allCases[segment]
             actionsDelegate?.segmentDidChange(to: currentSegment)
         }
         
@@ -97,11 +98,6 @@ extension TVChannelsView {
         
         static let tableViewRowHeight: CGFloat = 80
         static let tableViewContentOffset: CGFloat = 20
-    }
-    
-    enum SegmentsElement: String, CaseIterable {
-        case all = "Все"
-        case favorites = "Избранное"
     }
     
     private func setupView() {

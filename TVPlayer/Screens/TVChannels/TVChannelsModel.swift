@@ -8,5 +8,8 @@
 import Foundation
 
 final class TVChannelsModel {
-    
+    enum SegmentsElement: String, CaseIterable {
+        case all = "Все"
+        case favorites = "Избранное"
+    }
 }

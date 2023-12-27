@@ -11,7 +11,7 @@ protocol TVChannelServiceProtocol {
     func getChannels(completion: @escaping ([TVChannel]) -> Void)
 }
 
-final class TVChannelService: TVChannelServiceProtocol {
+final class TVChannelNetworkService: TVChannelServiceProtocol {
     let manager: NetworkManagerProtocol
     
     init(manager: NetworkManagerProtocol) {
