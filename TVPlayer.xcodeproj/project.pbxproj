@@ -24,12 +24,12 @@
 		8E8A06C12B3B55710045E8F2 /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E8A06C02B3B55710045E8F2 /* Double.swift */; };
 		8E8A06C42B3B751A0045E8F2 /* DependencyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E8A06C32B3B751A0045E8F2 /* DependencyContainer.swift */; };
 		8E8A06C72B3B7C570045E8F2 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E8A06C62B3B7C570045E8F2 /* StorageManager.swift */; };
-		8E8A06E82B3B8E980045E8F2 /* TVChannelCoreDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8E8A06E62B3B8E970045E8F2 /* TVChannelCoreDataModel.xcdatamodeld */; };
 		8E8A06EA2B3B9D9F0045E8F2 /* TVChannelsStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E8A06E92B3B9D9F0045E8F2 /* TVChannelsStorageService.swift */; };
 		8EA33EAB2B38A16800759822 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA33EAA2B38A16800759822 /* VideoPlayer.swift */; };
 		8EBF89442B375E49004EFE12 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8EBF89432B375E49004EFE12 /* Images.xcassets */; };
 		8EBF89462B376AFC004EFE12 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EBF89452B376AFC004EFE12 /* Observable.swift */; };
 		8EE2BCB92B3C35AD00F16F4C /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EE2BCB82B3C35AD00F16F4C /* SearchBar.swift */; };
+		8EE2BCC02B3C676000F16F4C /* TVChannelCoreDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8EE2BCBE2B3C676000F16F4C /* TVChannelCoreDataModel.xcdatamodeld */; };
 		8EFA73F52B34A11E00F13FB6 /* TVChannelsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFA73F42B34A11E00F13FB6 /* TVChannelsController.swift */; };
 		8EFA73F82B34A76F00F13FB6 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFA73F72B34A76F00F13FB6 /* Theme.swift */; };
 		8EFA73FA2B34A82B00F13FB6 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8EFA73F92B34A82B00F13FB6 /* Colors.xcassets */; };
@@ -58,12 +58,12 @@
 		8E8A06C02B3B55710045E8F2 /* Double.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
 		8E8A06C32B3B751A0045E8F2 /* DependencyContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyContainer.swift; sourceTree = "<group>"; };
 		8E8A06C62B3B7C570045E8F2 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
-		8E8A06E72B3B8E970045E8F2 /* TVChannelCoreDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TVChannelCoreDataModel.xcdatamodel; sourceTree = "<group>"; };
 		8E8A06E92B3B9D9F0045E8F2 /* TVChannelsStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVChannelsStorageService.swift; sourceTree = "<group>"; };
 		8EA33EAA2B38A16800759822 /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
 		8EBF89432B375E49004EFE12 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		8EBF89452B376AFC004EFE12 /* Observable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
 		8EE2BCB82B3C35AD00F16F4C /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
+		8EE2BCBF2B3C676000F16F4C /* TVChannelCoreDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TVChannelCoreDataModel.xcdatamodel; sourceTree = "<group>"; };
 		8EFA73F42B34A11E00F13FB6 /* TVChannelsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVChannelsController.swift; sourceTree = "<group>"; };
 		8EFA73F72B34A76F00F13FB6 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		8EFA73F92B34A82B00F13FB6 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
@@ -96,7 +96,7 @@
 		8E500C082B3463D500574211 = {
 			isa = PBXGroup;
 			children = (
-				8E8A06E62B3B8E970045E8F2 /* TVChannelCoreDataModel.xcdatamodeld */,
+				8EE2BCBE2B3C676000F16F4C /* TVChannelCoreDataModel.xcdatamodeld */,
 				8E500C132B3463D600574211 /* TVPlayer */,
 				8E500C122B3463D600574211 /* Products */,
 			);
@@ -312,10 +312,10 @@
 				8E8A06EA2B3B9D9F0045E8F2 /* TVChannelsStorageService.swift in Sources */,
 				8E500C322B347FF700574211 /* NetworkManager.swift in Sources */,
 				8E500C382B348B8900574211 /* TVChannelsModel.swift in Sources */,
-				8E8A06E82B3B8E980045E8F2 /* TVChannelCoreDataModel.xcdatamodeld in Sources */,
 				8E1C461B2B388952009035E0 /* TVPlayerView.swift in Sources */,
 				8EE2BCB92B3C35AD00F16F4C /* SearchBar.swift in Sources */,
 				8E61B3472B39FB1500B1EF6E /* TVPlayerModel.swift in Sources */,
+				8EE2BCC02B3C676000F16F4C /* TVChannelCoreDataModel.xcdatamodeld in Sources */,
 				8E500C342B34897700574211 /* TVChannelsView.swift in Sources */,
 				8E500C152B3463D600574211 /* AppDelegate.swift in Sources */,
 				8EFA74002B34CC1500F13FB6 /* SegmentsView.swift in Sources */,
@@ -524,14 +524,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		8E8A06E62B3B8E970045E8F2 /* TVChannelCoreDataModel.xcdatamodeld */ = {
+		8EE2BCBE2B3C676000F16F4C /* TVChannelCoreDataModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				8E8A06E72B3B8E970045E8F2 /* TVChannelCoreDataModel.xcdatamodel */,
+				8EE2BCBF2B3C676000F16F4C /* TVChannelCoreDataModel.xcdatamodel */,
 			);
-			currentVersion = 8E8A06E72B3B8E970045E8F2 /* TVChannelCoreDataModel.xcdatamodel */;
-			name = TVChannelCoreDataModel.xcdatamodeld;
-			path = ../TVChannelCoreDataModel.xcdatamodeld;
+			currentVersion = 8EE2BCBF2B3C676000F16F4C /* TVChannelCoreDataModel.xcdatamodel */;
+			path = TVChannelCoreDataModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
