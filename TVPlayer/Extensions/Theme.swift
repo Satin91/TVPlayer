@@ -18,6 +18,7 @@ enum Theme {
         static let divider = UIColor(named: "divider")
         static let mint = UIColor(named: "mint")
         static let contextDivider = UIColor(named: "contextDivider")
+        static let textFieldBG = UIColor(named: "textFieldBG")
     }
     
     enum Images {

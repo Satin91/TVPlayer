@@ -11,6 +11,7 @@ protocol TVChannelViewActionsDelegate: AnyObject {
     func didTap(on row: Int, on segment: TVChannelsView.SegmentsElement)
     func segmentDidChange(to: TVChannelsView.SegmentsElement)
     func tapFavorite(on row: Int, on segment: TVChannelsView.SegmentsElement)
+    func searchChannel(by text: String, on segment: TVChannelsView.SegmentsElement)
 }
 
 class TVChannelsView: UIView {
@@ -18,13 +19,14 @@ class TVChannelsView: UIView {
     private let navigationView = UIView()
     private let segmentsView = SegmentsView(segments: [SegmentsElement.all.rawValue, SegmentsElement.favorites.rawValue])
     private let divider = UIView()
-    private let activityIndicator = UIActivityIndicatorView(frame: .zero)
+    private let searchBar = SearchBar()
     
     private var currentSegment: SegmentsElement = .all
     
     weak var actionsDelegate: TVChannelViewActionsDelegate?
     
     var dynamicChannels = Observable<[TVChannel]>([])
+    
     private var viewState: Bool = false
     
     override init(frame: CGRect) {
@@ -43,6 +45,10 @@ class TVChannelsView: UIView {
         segmentsView.onTapSegment { [unowned self] segment in
             currentSegment = SegmentsElement.allCases[segment]
             actionsDelegate?.segmentDidChange(to: currentSegment)
+        }
+        
+        searchBar.searchText.subscribe { [unowned self] text in
+            actionsDelegate?.searchChannel(by: text, on: currentSegment)
         }
         
         dynamicChannels.subscribe { channels in
@@ -84,7 +90,7 @@ extension TVChannelsView {
     enum Constants {
         static let padding: CGFloat = 16
         static let cellID = "channelCell"
-        static let navigationHeight: CGFloat = 120
+        static let navigationHeight: CGFloat = 180
         static let segmentsHeight: CGFloat = 38
         static let segmentsBottomPadding: CGFloat = 6
         static let dividerHeight: CGFloat = 0.5
@@ -101,16 +107,14 @@ extension TVChannelsView {
     private func setupView() {
         addSubview(navigationView)
         addSubview(tableView)
-        addSubview(activityIndicator)
         navigationView.addSubview(segmentsView)
         navigationView.addSubview(divider)
+        navigationView.addSubview(searchBar)
+        
         
         backgroundColor = Theme.Colors.darkGray
         navigationView.backgroundColor = Theme.Colors.gray
         divider.backgroundColor = Theme.Colors.divider
-        activityIndicator.startAnimating()
-        activityIndicator.isHidden = false
-        activityIndicator.style = UIActivityIndicatorView.Style.white
     }
     
     private func makeConstraints() {
@@ -118,8 +122,7 @@ extension TVChannelsView {
         segmentsView.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
         divider.translatesAutoresizingMaskIntoConstraints = false
-//        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        activityIndicator.isHidden = true
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             // Navigation View
@@ -127,6 +130,11 @@ extension TVChannelsView {
             navigationView.trailingAnchor.constraint(equalTo: trailingAnchor),
             navigationView.heightAnchor.constraint(equalToConstant: Constants.navigationHeight),
             navigationView.topAnchor.constraint(equalTo: topAnchor),
+            
+            searchBar.topAnchor.constraint(equalTo: navigationView.topAnchor, constant: 80),
+            searchBar.leadingAnchor.constraint(equalTo: navigationView.leadingAnchor, constant: 24),
+            searchBar.trailingAnchor.constraint(equalTo: navigationView.trailingAnchor, constant: -24),
+            searchBar.heightAnchor.constraint(equalToConstant: 48),
             
             // Segments View
             segmentsView.leadingAnchor.constraint(equalTo: navigationView.leadingAnchor, constant: Constants.padding),
@@ -145,10 +153,6 @@ extension TVChannelsView {
             tableView.bottomAnchor.constraint(equalTo: bottomAnchor),
             tableView.widthAnchor.constraint(equalTo: widthAnchor),
             
-            // Activity Indicator
-//            activityIndicator.topAnchor.constraint(equalTo: navigationView.bottomAnchor),
-//            activityIndicator.bottomAnchor.constraint(equalTo: bottomAnchor),
-//            activityIndicator.widthAnchor.constraint(equalTo: widthAnchor)
         ])
     }
     

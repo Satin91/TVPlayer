@@ -42,43 +42,74 @@ class TVChannelsController: UIViewController {
     }
     
     func loadChannels() {
-        let storageChannels = storageService?.fetchAll()
-        favoriteChannels = storageChannels!
         networkService?.getChannels { [self] channels in
-            
-            self.channels.send(channels)
-            
-            print(favoriteChannels)
             self.allChannels = channels
         }
+        let storageChannels = storageService?.fetchAll() ?? []
+        favoriteChannels = storageChannels
+        
+        for channel in allChannels {
+            if storageChannels.contains(where: { $0.id == channel.id }) {
+                channel.isFavorite = true
+            }
+        }
+        self.channels.send(allChannels)
+    }
+    
+    func createFavorite(_ channel: TVChannel) {
+            favoriteChannels.append(channel)
+            storageService?.create(channel: channel)
+    }
+    
+    func removeFavorite(_ channel: TVChannel) {
+        guard let firstIndex = favoriteChannels.firstIndex(where: { $0.id == channel.id }) else { return }
+        favoriteChannels.remove(at: firstIndex)
+        storageService?.remove(with: channel.id)
     }
 }
 
 extension TVChannelsController: TVChannelViewActionsDelegate {
+    func searchChannel(by text: String, on segment: TVChannelsView.SegmentsElement) {
+        if text == "" {
+            channels.send(segment == .all ? allChannels : favoriteChannels)
+        } else {
+            
+            let filteredChannels = (segment == .all ? allChannels : favoriteChannels).filter { channel in
+                channel.name.contains(text)
+            }
+            channels.send(filteredChannels)
+        }
+    }
     
     func tapFavorite(on row: Int, on segment: TVChannelsView.SegmentsElement) {
         switch segment {
         case .all:
-            let object = allChannels[row]
-            object.isFavorite.toggle()
+            let channel = allChannels[row]
+            if channel.isFavorite {
+                removeFavorite(channel)
+            } else {
+                createFavorite(channel)
+            }
+            channel.isFavorite.toggle()
             channels.send(allChannels)
-            storageService?.create(channel: object)
-            favoriteChannels.append(object)
         case .favorites:
-            favoriteChannels.remove(at: row)
+            let channel = favoriteChannels[row]
+            removeFavorite(channel)
+            allChannels.filter( { $0.id == channel.id } ).first?.isFavorite.toggle()
             channels.send(favoriteChannels)
         }
     }
     
     func didTap(on row: Int, on segment: TVChannelsView.SegmentsElement) {
         switch segment {
+            
         case .all:
             let channel = allChannels[row]
             coordinator?.pushToVideoPlayer(with: channel)
         case .favorites:
-            let object = favoriteChannels[row]
-            storageService?.remove(with: object.id)
-            favoriteChannels.remove(at: row)
+            let channel = favoriteChannels[row]
+            removeFavorite(channel)
+            allChannels.filter( { $0.id == channel.id } ).first?.isFavorite.toggle()
             channels.send(favoriteChannels)
         }
     }

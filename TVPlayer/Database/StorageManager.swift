@@ -12,9 +12,10 @@ import CoreData
 protocol StorageManagerProtocol {
     var context: NSManagedObjectContext { get }
     
+    func isExists<T: NSFetchRequestResult>(object: T.Type, with predicate: NSPredicate) -> Bool
     func create(object: TVChannelCore)
     func fetchAll<T:NSFetchRequestResult>() -> [T]
-    func delete<T:NSFetchRequestResult>(object: T.Type, predicate: NSPredicate)
+    func delete<T:NSFetchRequestResult>(object: T.Type, with predicate: NSPredicate)
 }
 
 public final class StorageManager: NSObject {
@@ -43,6 +44,8 @@ public final class StorageManager: NSObject {
         self.entityName = entityName
     }
     
+    
+    
     func saveContext() {
         if context.hasChanges {
             do {
@@ -52,19 +55,21 @@ public final class StorageManager: NSObject {
             }
         }
     }
-
-    func deleteAll() {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
-        do {
-            let objects = try context.fetch(fetchRequest) as? [NSManagedObject]
-            objects?.forEach { context.delete($0) }
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
 }
 
 extension StorageManager: StorageManagerProtocol {
+    
+    func isExists<T: NSFetchRequestResult>(object: T.Type, with predicate: NSPredicate) -> Bool {
+        let fetchRequest = NSFetchRequest<T>(entityName: entityName)
+        fetchRequest.predicate = predicate
+        do {
+            let objects = try context.fetch(fetchRequest)
+            return !objects.isEmpty
+        } catch {
+            print(error)
+            return false
+        }
+    }
     
     func create<T: NSManagedObject>(object: T) {
         saveContext()
@@ -72,7 +77,6 @@ extension StorageManager: StorageManagerProtocol {
     
     func fetchAll<T:NSFetchRequestResult>() -> [T] {
         let fetchRequest = NSFetchRequest<T>(entityName: entityName)
-        
         do {
             let models = try context.fetch(fetchRequest)
             return models
@@ -82,7 +86,7 @@ extension StorageManager: StorageManagerProtocol {
         }
     }
      
-    func delete<T:NSFetchRequestResult>(object: T.Type, predicate: NSPredicate) {
+    func delete<T:NSFetchRequestResult>(object: T.Type, with predicate: NSPredicate) {
         let fetchRequest = NSFetchRequest<T>(entityName: entityName)
         fetchRequest.predicate = predicate
         do {

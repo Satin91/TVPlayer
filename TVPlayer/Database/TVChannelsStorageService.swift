@@ -24,6 +24,8 @@ final class TVChannelsStorageService: TVChannelsStorageServiceProtocol {
     }
     
     func create(channel: TVChannel) {
+        let predicate = NSPredicate(format: "id = %i", channel.id)
+        guard manager.isExists(object: TVChannelCore.self, with: predicate) == false else { return }
         guard let description = NSEntityDescription.entity(forEntityName: "TVChannelCore", in: context) else { return }
         let channelCore = TVChannelCore(entity: description, insertInto: context)
         channelCore.id = Int64(channel.id)
@@ -31,7 +33,7 @@ final class TVChannelsStorageService: TVChannelsStorageServiceProtocol {
         channelCore.imageURL = channel.imageURL
         channelCore.channelURL = channel.channelURL
         channelCore.currentBroadcast = channel.currentBroadcast.title
-        channelCore.isFavorite = channel.isFavorite
+        channelCore.isFavorite = true
         manager.create(object: channelCore)
     }
     
@@ -44,6 +46,6 @@ final class TVChannelsStorageService: TVChannelsStorageServiceProtocol {
     
     func remove(with id: Int) {
         let predicate = NSPredicate(format: "id = %i", id)
-        manager.delete(object: TVChannelCore.self, predicate: predicate)
+        manager.delete(object: TVChannelCore.self, with: predicate)
     }
 }
