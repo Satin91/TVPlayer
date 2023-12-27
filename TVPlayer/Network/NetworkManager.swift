@@ -22,7 +22,7 @@ final class NetworkManager: NetworkManagerProtocol {
             let decodedData = try decoder.decode(responseOf.self, from: data)
             completion(decodedData)
         } catch {
-            print("error: \(error)")
+            fatalError("Error \(error)")
         }
     }
     

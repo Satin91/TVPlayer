@@ -10,15 +10,14 @@ import UIKit
 class TVChannelsController: UIViewController {
     
     var coordinator: AppCoordinatorProtocol?
-    var service: TVChannelServiceProtocol?
+    var networkService: TVChannelServiceProtocol?
+    var storageService: TVChannelsStorageServiceProtocol?
     
     private var presentedView = TVChannelsView()
     
     private var allChannels: [TVChannel] = []
     
-    private var favoriteChannels: [TVChannel] {
-        allChannels.filter { $0.isFavorite }
-    }
+    private var favoriteChannels: [TVChannel] = []
     
     private var channels = Observable<[TVChannel]>([])
     
@@ -43,9 +42,14 @@ class TVChannelsController: UIViewController {
     }
     
     func loadChannels() {
-        service?.getChannels { channels in
+        let storageChannels = storageService?.fetchAll()
+        favoriteChannels = storageChannels!
+        networkService?.getChannels { [self] channels in
+            
+            self.channels.send(channels)
+            
+            print(favoriteChannels)
             self.allChannels = channels
-            self.channels.value = channels
         }
     }
 }
@@ -55,10 +59,13 @@ extension TVChannelsController: TVChannelViewActionsDelegate {
     func tapFavorite(on row: Int, on segment: TVChannelsView.SegmentsElement) {
         switch segment {
         case .all:
-            self.allChannels[row].isFavorite.toggle()
+            let object = allChannels[row]
+            object.isFavorite.toggle()
             channels.send(allChannels)
+            storageService?.create(channel: object)
+            favoriteChannels.append(object)
         case .favorites:
-            self.favoriteChannels[row].isFavorite.toggle()
+            favoriteChannels.remove(at: row)
             channels.send(favoriteChannels)
         }
     }
@@ -69,7 +76,9 @@ extension TVChannelsController: TVChannelViewActionsDelegate {
             let channel = allChannels[row]
             coordinator?.pushToVideoPlayer(with: channel)
         case .favorites:
-            favoriteChannels[row].isFavorite.toggle()
+            let object = favoriteChannels[row]
+            storageService?.remove(with: object.id)
+            favoriteChannels.remove(at: row)
             channels.send(favoriteChannels)
         }
     }

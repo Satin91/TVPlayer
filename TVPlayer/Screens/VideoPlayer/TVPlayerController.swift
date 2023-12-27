@@ -10,13 +10,11 @@ import UIKit
 
 final class TVPlayerController: UIViewController {
     
-    var playerState = Observable(TVPlayerModel.PlayerState.playing)
-    
     var coordinator: AppCoordinatorProtocol?
-    
     var presentedView = TVPlayerView()
     
-    var tvChannel: TVChannel!
+    var playerState = Observable(TVPlayerModel.PlayerState.playing)
+    var tvChannel: TVChannel?
     
     convenience init(tvChannel: TVChannel) {
         self.init()
@@ -26,6 +24,7 @@ final class TVPlayerController: UIViewController {
     override func loadView() {
         super.loadView()
         self.view = presentedView
+        guard let tvChannel else { return }
         presentedView.configure(with: tvChannel)
     }
     
@@ -50,6 +49,7 @@ extension TVPlayerController: TVPlayerViewActionsDelegate {
     }
     
     func tapResolution(scale: String) {
+        // imitation of resolution change
         let previousState = playerState.value
         playerState.send(.loading)
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {

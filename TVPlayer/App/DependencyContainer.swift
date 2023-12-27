@@ -9,16 +9,20 @@ import UIKit
 
 final class DependencyContainer {
     let networkManager: NetworkManagerProtocol = NetworkManager()
-    let tvChannelService: TVChannelServiceProtocol
+    let tvChannelNetworkService: TVChannelServiceProtocol
+    let storageManager: StorageManagerProtocol = StorageManager(entityName: "TVChannelCore")
+    let tvChannelStorageService: TVChannelsStorageServiceProtocol
     
     init() {
-        tvChannelService = TVChannelService(manager: networkManager)
+        tvChannelNetworkService = TVChannelService(manager: networkManager)
+        tvChannelStorageService = TVChannelsStorageService(manager: storageManager, context: storageManager.context)
     }
     
     func makeTvChannelsController(coordinator: AppCoordinator) -> TVChannelsController {
         let controller = TVChannelsController()
         controller.coordinator = coordinator
-        controller.service = tvChannelService
+        controller.networkService = tvChannelNetworkService
+        controller.storageService = tvChannelStorageService
         return controller
     }
     

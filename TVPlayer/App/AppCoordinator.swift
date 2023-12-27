@@ -10,7 +10,7 @@ import AVKit
 
 protocol AppCoordinatorProtocol: AnyObject {
     func dismiss()
-    func pushToTv()
+    func pushToTvChannels()
     func pushToVideoPlayer(with channel: TVChannel)
 }
 
@@ -25,7 +25,7 @@ class AppCoordinator {
     }
     
     func start() {
-        pushToTv()
+        pushToTvChannels()
     }
 }
 
@@ -34,7 +34,7 @@ extension AppCoordinator: AppCoordinatorProtocol {
         self.navigation.popToRootViewController(animated: true)
     }
     
-    func pushToTv() {
+    func pushToTvChannels() {
         let vc = container.makeTvChannelsController(coordinator: self)
         self.navigation.pushViewController(vc, animated: true)
     }

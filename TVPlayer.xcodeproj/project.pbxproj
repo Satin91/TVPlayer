@@ -23,6 +23,9 @@
 		8E8A06BF2B3B17E50045E8F2 /* ContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E8A06BE2B3B17E50045E8F2 /* ContextMenu.swift */; };
 		8E8A06C12B3B55710045E8F2 /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E8A06C02B3B55710045E8F2 /* Double.swift */; };
 		8E8A06C42B3B751A0045E8F2 /* DependencyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E8A06C32B3B751A0045E8F2 /* DependencyContainer.swift */; };
+		8E8A06C72B3B7C570045E8F2 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E8A06C62B3B7C570045E8F2 /* StorageManager.swift */; };
+		8E8A06E82B3B8E980045E8F2 /* TVChannelCoreDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8E8A06E62B3B8E970045E8F2 /* TVChannelCoreDataModel.xcdatamodeld */; };
+		8E8A06EA2B3B9D9F0045E8F2 /* TVChannelsStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E8A06E92B3B9D9F0045E8F2 /* TVChannelsStorageService.swift */; };
 		8EA33EAB2B38A16800759822 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EA33EAA2B38A16800759822 /* VideoPlayer.swift */; };
 		8EBF89442B375E49004EFE12 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8EBF89432B375E49004EFE12 /* Images.xcassets */; };
 		8EBF89462B376AFC004EFE12 /* Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EBF89452B376AFC004EFE12 /* Observer.swift */; };
@@ -53,6 +56,9 @@
 		8E8A06BE2B3B17E50045E8F2 /* ContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenu.swift; sourceTree = "<group>"; };
 		8E8A06C02B3B55710045E8F2 /* Double.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
 		8E8A06C32B3B751A0045E8F2 /* DependencyContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyContainer.swift; sourceTree = "<group>"; };
+		8E8A06C62B3B7C570045E8F2 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
+		8E8A06E72B3B8E970045E8F2 /* TVChannelCoreDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TVChannelCoreDataModel.xcdatamodel; sourceTree = "<group>"; };
+		8E8A06E92B3B9D9F0045E8F2 /* TVChannelsStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVChannelsStorageService.swift; sourceTree = "<group>"; };
 		8EA33EAA2B38A16800759822 /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
 		8EBF89432B375E49004EFE12 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		8EBF89452B376AFC004EFE12 /* Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observer.swift; sourceTree = "<group>"; };
@@ -88,6 +94,7 @@
 		8E500C082B3463D500574211 = {
 			isa = PBXGroup;
 			children = (
+				8E8A06E62B3B8E970045E8F2 /* TVChannelCoreDataModel.xcdatamodeld */,
 				8E500C132B3463D600574211 /* TVPlayer */,
 				8E500C122B3463D600574211 /* Products */,
 			);
@@ -106,6 +113,7 @@
 			children = (
 				8E500C282B3468C300574211 /* App */,
 				8E500C292B3468D100574211 /* Network */,
+				8E8A06C52B3B7C470045E8F2 /* Database */,
 				8E500C2A2B3468DE00574211 /* Screens */,
 				8EFA73F62B34A73300F13FB6 /* Extensions */,
 				8E8A06C22B3B55B20045E8F2 /* Helpers */,
@@ -165,6 +173,15 @@
 				8EBF89452B376AFC004EFE12 /* Observer.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		8E8A06C52B3B7C470045E8F2 /* Database */ = {
+			isa = PBXGroup;
+			children = (
+				8E8A06C62B3B7C570045E8F2 /* StorageManager.swift */,
+				8E8A06E92B3B9D9F0045E8F2 /* TVChannelsStorageService.swift */,
+			);
+			path = Database;
 			sourceTree = "<group>";
 		};
 		8EBF89422B375920004EFE12 /* UIComponents */ = {
@@ -272,8 +289,11 @@
 				8E8A06BF2B3B17E50045E8F2 /* ContextMenu.swift in Sources */,
 				8EFA73FE2B34B47F00F13FB6 /* ImageView.swift in Sources */,
 				8E500C302B346F8900574211 /* TVChannelService.swift in Sources */,
+				8E8A06C72B3B7C570045E8F2 /* StorageManager.swift in Sources */,
+				8E8A06EA2B3B9D9F0045E8F2 /* TVChannelsStorageService.swift in Sources */,
 				8E500C322B347FF700574211 /* NetworkManager.swift in Sources */,
 				8E500C382B348B8900574211 /* TVChannelsModel.swift in Sources */,
+				8E8A06E82B3B8E980045E8F2 /* TVChannelCoreDataModel.xcdatamodeld in Sources */,
 				8E1C461B2B388952009035E0 /* TVPlayerView.swift in Sources */,
 				8E61B3472B39FB1500B1EF6E /* TVPlayerModel.swift in Sources */,
 				8E500C342B34897700574211 /* TVChannelsView.swift in Sources */,
@@ -482,6 +502,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		8E8A06E62B3B8E970045E8F2 /* TVChannelCoreDataModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				8E8A06E72B3B8E970045E8F2 /* TVChannelCoreDataModel.xcdatamodel */,
+			);
+			currentVersion = 8E8A06E72B3B8E970045E8F2 /* TVChannelCoreDataModel.xcdatamodel */;
+			name = TVChannelCoreDataModel.xcdatamodeld;
+			path = ../TVChannelCoreDataModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 8E500C092B3463D500574211 /* Project object */;
 }

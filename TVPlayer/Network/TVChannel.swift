@@ -19,6 +19,16 @@ class TVChannel: Decodable {
     var channelURL: URL
     var isFavorite: Bool
     
+    
+    init(channelCore: TVChannelCore) {
+        self.id = Int(channelCore.id)
+        self.name = channelCore.name ?? "No name"
+        self.currentBroadcast = Broadcast(title: channelCore.currentBroadcast ?? "No broadcast")
+        self.imageURL = channelCore.imageURL ?? URL(string: "https://spinalcompass.com/wp-content/uploads/2017/07/Employer_icon-01.png")!
+        self.channelURL = channelCore.channelURL ?? URL(string: "https://spinalcompass.com/wp-content/uploads/2017/07/Employer_icon-01.png")!
+        self.isFavorite = channelCore.isFavorite
+    }
+    
     enum CodingKeys: String, CodingKey {
         case id
         case name_ru
@@ -39,5 +49,8 @@ class TVChannel: Decodable {
 }
 
 class Broadcast: Decodable {
+    init(title: String) {
+        self.title = title
+    }
     var title: String
 }
