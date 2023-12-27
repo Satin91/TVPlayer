@@ -27,7 +27,8 @@ final class DependencyContainer {
     }
     
     func makeTVPlayerController(coordinator: AppCoordinator, channel: TVChannel) -> TVPlayerController {
-        let controller = TVPlayerController(tvChannel: channel)
+        let controller = TVPlayerController()
+        controller.model = TVPlayerModel(tvChannel: channel)
         controller.coordinator = coordinator
         return controller
     }
