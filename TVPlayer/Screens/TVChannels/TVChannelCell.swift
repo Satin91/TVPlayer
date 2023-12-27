@@ -17,6 +17,7 @@ final class TVChannelCell: UITableViewCell {
     
     var onTapFavoriteButton: (() -> Void)?
     
+    private var imageURL: URL?
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupView()
@@ -32,11 +33,20 @@ final class TVChannelCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    
+    
     public func configureCell(with channel: TVChannel) {
+        channelImage.image = nil
         channelNameLabel.text = channel.name
         currentBroadcastLabel.text = channel.currentBroadcast.title
         favoriteButton.imageView?.tintColor = channel.isFavorite ? Theme.Colors.accent : Theme.Colors.lightGray
         channelImage.loadImage(from: channel.imageURL)
+    }
+    
+    func setAsyncImae(image: UIImage) {
+        DispatchQueue.main.async {
+            self.channelImage.image = image
+        }
     }
     
     private func setupView() {
@@ -46,27 +56,22 @@ final class TVChannelCell: UITableViewCell {
         contentView.addSubview(favoriteButton)
         contentView.backgroundColor = Theme.Colors.gray
         contentView.layer.cornerRadius = 10
-        
         backgroundColor = .clear
         selectionStyle = .none
-        
+
         labelsStackView.addArrangedSubview(channelNameLabel)
         labelsStackView.addArrangedSubview(currentBroadcastLabel)
         labelsStackView.alignment = .leading
         labelsStackView.axis = .vertical
         labelsStackView.spacing = 8
         
-        
         favoriteButton.setImage(Theme.Images.star.withRenderingMode(.alwaysTemplate), for: .normal)
         favoriteButton.imageView?.image?.withRenderingMode(.alwaysTemplate)
-        
         favoriteButton.addTarget(self, action: #selector(tapFavorite(_:)), for: .touchUpInside)
         
         channelImage.backgroundColor = .white
         channelImage.layer.cornerRadius = 12
-        
         channelNameLabel.textColor = .white
-        
         currentBroadcastLabel.textColor = .white
     }
     

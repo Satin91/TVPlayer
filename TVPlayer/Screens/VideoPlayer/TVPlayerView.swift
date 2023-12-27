@@ -73,7 +73,7 @@ final class TVPlayerView: UIView {
     
     func configure(with channel: TVChannel) {
         self.channel = channel
-        channelImage.loadImage(from: channel.imageURL)
+//        channelImage.loadImage(from: channel.imageURL)
         channelNameLabel.text = channel.name
         broadcastLabel.text = channel.currentBroadcast.title
         videoPlayer.configure(with: channel.channelURL)

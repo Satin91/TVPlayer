@@ -71,10 +71,11 @@ extension TVChannelsView: UITableViewDelegate {
 }
 
 extension TVChannelsView: UITableViewDataSource {
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return dynamicChannels.value.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Constants.cellID, for: indexPath) as! TVChannelCell
         let item = dynamicChannels.value[indexPath.row]
@@ -85,6 +86,9 @@ extension TVChannelsView: UITableViewDataSource {
         return cell
     }
     
+    func loadImageFor(indexPath: IndexPath) {
+        
+    }
 }
 
 // MARK: - Setup View
@@ -96,7 +100,6 @@ extension TVChannelsView {
         static let segmentsHeight: CGFloat = 38
         static let segmentsBottomPadding: CGFloat = 6
         static let dividerHeight: CGFloat = 0.5
-        
         static let tableViewRowHeight: CGFloat = 80
         static let tableViewContentOffset: CGFloat = 20
     }
@@ -107,8 +110,6 @@ extension TVChannelsView {
         navigationView.addSubview(segmentsView)
         navigationView.addSubview(divider)
         navigationView.addSubview(searchBar)
-        
-        
         backgroundColor = Theme.Colors.darkGray
         navigationView.backgroundColor = Theme.Colors.gray
         divider.backgroundColor = Theme.Colors.divider
