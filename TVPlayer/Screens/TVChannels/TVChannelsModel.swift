@@ -56,11 +56,7 @@ final class TVChannelsModel {
         switch currentSegment.value {
         case .all:
             channel.isFavorite.toggle()
-            if channel.isFavorite {
-                createFavorite(channel)
-            } else {
-                removeFavorite(channel)
-            }
+            channel.isFavorite ? createFavorite(channel) : removeFavorite(channel)
             channels.send(allChannels)
         case .favorites:
             removeFavorite(channel)
@@ -73,9 +69,8 @@ final class TVChannelsModel {
         if text == "" {
             channels.send(currentSegment.value == .all ? allChannels : favoriteChannels)
         } else {
-            
             let filteredChannels = (currentSegment.value == .all ? allChannels : favoriteChannels).filter { channel in
-                channel.name.contains(text)
+                channel.name.uppercased().contains(text.uppercased())
             }
             channels.send(filteredChannels)
         }

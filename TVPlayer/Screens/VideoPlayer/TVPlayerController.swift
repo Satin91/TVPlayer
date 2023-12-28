@@ -36,8 +36,12 @@ final class TVPlayerController: UIViewController {
 }
 
 extension TVPlayerController: TVPlayerViewActionsDelegate {
-    func videoIsLoaded() {
+    func outsideTapped() {
         
+    }
+    
+    func videoIsLoaded() {
+        model.playerState.send(.playing)
     }
     
     func tapResolution(scale: String) {
@@ -51,7 +55,6 @@ extension TVPlayerController: TVPlayerViewActionsDelegate {
     }
     
     func playerTapped() {
-        
         switch model.playerState.value {
         case .loading:
             break

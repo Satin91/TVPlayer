@@ -72,8 +72,7 @@ class VideoPlayer: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        playerLayer.frame = self.bounds
-        
+        playerLayer.frame = bounds
     }
     
     deinit {

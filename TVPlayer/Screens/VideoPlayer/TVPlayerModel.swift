@@ -15,7 +15,7 @@ class TVPlayerModel {
         case stop
     }
     var tvChannel: TVChannel?
-    var playerState = Observable(TVPlayerModel.PlayerState.playing)
+    var playerState = Observable(TVPlayerModel.PlayerState.loading)
     
     init(tvChannel: TVChannel? = nil) {
         self.tvChannel = tvChannel

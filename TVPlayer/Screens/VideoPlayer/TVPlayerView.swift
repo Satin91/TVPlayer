@@ -12,6 +12,7 @@ import AVFoundation
 protocol TVPlayerViewActionsDelegate: AnyObject {
     func navigationBackButtonTap()
     func playerTapped()
+    func outsideTapped()
     func videoIsLoaded()
     func tapResolution(scale: String)
 }
@@ -28,6 +29,7 @@ final class TVPlayerView: UIView {
         static let playImageSide: CGFloat = 120
         
         static let timerHidingPanelValue: CGFloat = 3.0
+        static let videoHeightRatio: CGFloat = 0.5625
         
         static let liveBroadcastText = "Прямой эфир"
     }
@@ -64,16 +66,24 @@ final class TVPlayerView: UIView {
     
     private var topContainerConstraint = NSLayoutConstraint()
     private var bottomContainerConstraint = NSLayoutConstraint()
+    private var videoPlayerConstraint = NSLayoutConstraint()
+    
+    private var videoPlayerHeight: CGFloat {
+        if UIDevice.current.orientation == .portrait {
+            return frame.width * Constants.videoHeightRatio
+        } else {
+            return frame.height
+        }
+    }
     
     private var videoPlayer = VideoPlayer()
     private let activityIndicator = UIActivityIndicatorView()
     
     var channel: TVChannel?
     
-    
     func configure(with channel: TVChannel) {
         self.channel = channel
-//        channelImage.loadImage(from: channel.imageURL)
+        channelImage.loadImage(from: channel.imageURL)
         channelNameLabel.text = channel.name
         broadcastLabel.text = channel.currentBroadcast.title
         videoPlayer.configure(with: channel.channelURL)
@@ -108,10 +118,10 @@ final class TVPlayerView: UIView {
             self.timelineLabel.text = seconds > 10 ? "-" + seconds.stringSecondsFormat() : Constants.liveBroadcastText
         }
         
-        isVideoLoading.subscribe { isLoading in
-            self.videoPlayer.isHidden = isLoading
-            self.playButton.isHidden = isLoading
-            self.activityIndicator.isHidden = !isLoading
+        isVideoLoading.subscribe { [unowned self] isLoading in
+            videoPlayer.isHidden = isLoading
+            playButton.isHidden = isLoading
+            activityIndicator.isHidden = !isLoading
         }
         
         isPanelVisible.subscribe { [unowned self] visible in
@@ -222,6 +232,26 @@ final class TVPlayerView: UIView {
         actionsDelegate?.playerTapped()
     }
     
+    @objc func backgroundTapped(_ gesture: UITapGestureRecognizer) {
+        timerHidingPanel?.invalidate()
+        isContextVisible.send(false)
+        
+        switch playerState.value {
+        case .playing:
+            if isPanelVisible.value {
+                isPanelVisible.send(false)
+            } else {
+                isPanelVisible.send(true)
+                timerHidingPanel?.invalidate()
+                timerHidingPanel = Timer.scheduledTimer(withTimeInterval: Constants.timerHidingPanelValue, repeats: false) { timer in
+                    self.isPanelVisible.send(false)
+                }
+            }
+        default:
+            isPanelVisible.send(!isPanelVisible.value)
+        }
+    }
+    
     @objc private func backButtonTapped(_ button: UIButton) {
         actionsDelegate?.navigationBackButtonTap()
     }
@@ -234,6 +264,7 @@ final class TVPlayerView: UIView {
             isContextVisible.send(false)
         }
     }
+    
 }
 
 // MARK: - Setup view
@@ -283,13 +314,16 @@ extension TVPlayerView {
         contextMenu.layer.cornerRadius = 14
         contextMenu.clipsToBounds = true
         
-        let gesture = UITapGestureRecognizer(target: self, action: #selector(playerTapped(_:)))
-        videoPlayer.addGestureRecognizer(gesture)
+        let videoPlayerGesture = UITapGestureRecognizer(target: self, action: #selector(playerTapped(_:)))
+        videoPlayer.addGestureRecognizer(videoPlayerGesture)
+        videoPlayer.backgroundColor = .white
         
         playButton.image = Theme.Images.play
         playButton.layer.opacity = 0
         
         backgroundColor = .black
+        let backgroundGesture = UITapGestureRecognizer(target: self, action: #selector(backgroundTapped(_:)))
+        self.addGestureRecognizer(backgroundGesture)
     }
     
     private func makeConstraints() {
@@ -309,6 +343,8 @@ extension TVPlayerView {
         
         topContainerConstraint = topContainer.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: Constants.topPadding)
         bottomContainerConstraint = bottomContainer.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -Constants.bottomPadding)
+        
+        videoPlayerConstraint = videoPlayer.heightAnchor.constraint(equalToConstant: 0)
         
         NSLayoutConstraint.activate([
             // Top container
@@ -336,10 +372,12 @@ extension TVPlayerView {
             topLabelsStackView.trailingAnchor.constraint(equalTo: topContainer.trailingAnchor),
             
             // Video player
-            videoPlayer.topAnchor.constraint(equalTo: topAnchor),
+            videoPlayerConstraint,
+//            videoPlayer.topAnchor.constraint(equalTo: topAnchor),
+            videoPlayer.centerYAnchor.constraint(equalTo: centerYAnchor),
             videoPlayer.leadingAnchor.constraint(equalTo: leadingAnchor),
             videoPlayer.trailingAnchor.constraint(equalTo: trailingAnchor),
-            videoPlayer.bottomAnchor.constraint(equalTo: bottomAnchor),
+//            videoPlayer.bottomAnchor.constraint(equalTo: bottomAnchor),
             
             // Activity indicator
             activityIndicator.widthAnchor.constraint(equalToConstant: 44),
@@ -381,5 +419,11 @@ extension TVPlayerView {
             contextMenu.heightAnchor.constraint(equalToConstant: 200),
             contextMenu.widthAnchor.constraint(equalToConstant: 128),
         ])
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        videoPlayerConstraint.constant = videoPlayerHeight
+        layoutIfNeeded()
     }
 }

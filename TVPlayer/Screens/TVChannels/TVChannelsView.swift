@@ -53,7 +53,6 @@ class TVChannelsView: UIView {
         }
         
         dynamicChannels.subscribe { channels in
-            print("reload view")
             self.reloadView()
         }
     }
@@ -84,10 +83,6 @@ extension TVChannelsView: UITableViewDataSource {
         }
         cell.configureCell(with: item)
         return cell
-    }
-    
-    func loadImageFor(indexPath: IndexPath) {
-        
     }
 }
 
