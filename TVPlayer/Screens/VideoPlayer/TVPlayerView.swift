@@ -13,7 +13,7 @@ protocol TVPlayerViewActionsDelegate: AnyObject {
     func navigationBackButtonTap()
     func playerTapped()
     func outsideTapped()
-    func videoIsLoaded()
+    func completeLoading(success: Bool)
     func tapResolution(scale: String)
 }
 
@@ -32,6 +32,7 @@ final class TVPlayerView: UIView {
         static let videoHeightRatio: CGFloat = 0.5625
         
         static let liveBroadcastText = "Прямой эфир"
+        static let errorLabelText = "Невозможно воспроизвести трансляцию"
     }
     
     let test2VideoURL = URL(string: "https://cdn.ntv.ru/ntv0_hd/tracks-v3a1/rewind-7150.m3u8")
@@ -54,13 +55,16 @@ final class TVPlayerView: UIView {
 
     let resolutions = ["1080p", "720p", "480p", "AUTO"]
     let contextMenu = ContextMenu(elements: ["1080p","720p", "480p", "AUTO"])
+    
     var playerState: Observable<TVPlayerModel.PlayerState> = .init(.pause)
     
     private var timerHidingPanel: Timer?
+    private var isErrorVisible = Observable(true)
     private var isPanelVisible = Observable(true)
     private var isPlayButtonVisible = Observable(true)
     private var isContextVisible = Observable(false)
-    private var isVideoLoading = Observable(false)
+    private var isVideoVisible = Observable(false)
+    private var isIndicatorVisible = Observable(false)
     
     weak var actionsDelegate: TVPlayerViewActionsDelegate?
     
@@ -78,6 +82,7 @@ final class TVPlayerView: UIView {
     
     private var videoPlayer = VideoPlayer()
     private let activityIndicator = UIActivityIndicatorView()
+    private let errorLabel = UILabel()
     
     var channel: TVChannel?
     
@@ -103,6 +108,8 @@ final class TVPlayerView: UIView {
     private func subscribe() {
         playerState.subscribe { [unowned self] playerState in
             switch playerState {
+            case .failed:
+                failedState()
             case .loading:
                 loadingState()
             case .playing:
@@ -114,14 +121,20 @@ final class TVPlayerView: UIView {
             }
         }
         
-        videoPlayer.currentTime.subscribe { seconds in
-            self.timelineLabel.text = seconds > 10 ? "-" + seconds.stringSecondsFormat() : Constants.liveBroadcastText
+        videoPlayer.currentTime.subscribe { [unowned self] seconds in
+            timelineLabel.text = seconds > 10 ? "-" + seconds.stringSecondsFormat() : Constants.liveBroadcastText
         }
         
-        isVideoLoading.subscribe { [unowned self] isLoading in
-            videoPlayer.isHidden = isLoading
-            playButton.isHidden = isLoading
-            activityIndicator.isHidden = !isLoading
+        isVideoVisible.subscribe { [unowned self] isVisible in
+            videoPlayer.isHidden = !isVisible
+        }
+        
+        isIndicatorVisible.subscribe { [unowned self] isVisible in
+            activityIndicator.isHidden = !isVisible
+        }
+        
+        isErrorVisible.subscribe { [unowned self] isError in
+            errorLabel.isHidden = !isError
         }
         
         isPanelVisible.subscribe { [unowned self] visible in
@@ -144,8 +157,8 @@ final class TVPlayerView: UIView {
             self?.videoPlayer.rewind(to: value)
         }
         
-        videoPlayer.videoLoadingComplete { [weak self] in
-            self?.actionsDelegate?.videoIsLoaded()
+        videoPlayer.videoLoadingComplete { [weak self] success in
+            self?.actionsDelegate?.completeLoading(success: success)
         }
         
         contextMenu.didTapElement { [weak self] elementIndex in
@@ -156,12 +169,25 @@ final class TVPlayerView: UIView {
     }
     
     private func loadingState() {
-        isVideoLoading.send(true)
+        isPlayButtonVisible.send(false)
+        isIndicatorVisible.send(true)
+        isVideoVisible.send(false)
+        isErrorVisible.send(false)
         videoPlayer.pauseVideo()
     }
     
+    private func failedState() {
+        isVideoVisible.send(false)
+        isPlayButtonVisible.send(false)
+        isIndicatorVisible.send(false)
+        isContextVisible.send(false)
+        isErrorVisible.send(true)
+    }
+    
     private func playingState() {
-        isVideoLoading.send(false)
+        isVideoVisible.send(true)
+        isErrorVisible.send(false)
+        isIndicatorVisible.send(false)
         isPlayButtonVisible.send(false)
         isContextVisible.send(false)
         timerHidingPanel = Timer.scheduledTimer(withTimeInterval: Constants.timerHidingPanelValue, repeats: false) { timer in
@@ -172,7 +198,8 @@ final class TVPlayerView: UIView {
     
     private func pauseState() {
         timerHidingPanel?.invalidate()
-        isVideoLoading.send(false)
+        isVideoVisible.send(true)
+        isIndicatorVisible.send(false)
         isPlayButtonVisible.send(true)
         isPanelVisible.send(true)
         videoPlayer.pauseVideo()
@@ -180,12 +207,6 @@ final class TVPlayerView: UIView {
     
     private func stopState() {
         videoPlayer.pauseVideo()
-    }
-    
-    private func hideCentralContainer() {
-        videoPlayer.isHidden = true
-        activityIndicator.isHidden = false
-        activityIndicator.startAnimating()
     }
     
     private func showPanel() {
@@ -232,7 +253,7 @@ final class TVPlayerView: UIView {
         actionsDelegate?.playerTapped()
     }
     
-    @objc func backgroundTapped(_ gesture: UITapGestureRecognizer) {
+    @objc private func backgroundTapped(_ gesture: UITapGestureRecognizer) {
         timerHidingPanel?.invalidate()
         isContextVisible.send(false)
         
@@ -262,6 +283,10 @@ final class TVPlayerView: UIView {
             timerHidingPanel?.invalidate()
         } else {
             isContextVisible.send(false)
+            timerHidingPanel?.invalidate()
+            timerHidingPanel = Timer.scheduledTimer(withTimeInterval: Constants.timerHidingPanelValue, repeats: false) { timer in
+                self.isPanelVisible.send(false)
+            }
         }
     }
     
@@ -276,13 +301,11 @@ extension TVPlayerView {
         addSubview(bottomContainer)
         addSubview(playButton)
         addSubview(contextMenu)
+        addSubview(errorLabel)
         // Top
         topContainer.addSubview(backButton)
         topContainer.addSubview(channelImage)
         topContainer.addSubview(topLabelsStackView)
-        
-        activityIndicator.startAnimating()
-        activityIndicator.style = UIActivityIndicatorView.Style.whiteLarge
         
         topLabelsStackView.addArrangedSubview(broadcastLabel)
         topLabelsStackView.addArrangedSubview(channelNameLabel)
@@ -297,6 +320,23 @@ extension TVPlayerView {
         
         backButton.setImage(Theme.Images.arrowLeft, for: .normal)
         backButton.addTarget(self, action: #selector(backButtonTapped(_:)), for: .touchUpInside)
+        
+        // Center
+        let videoPlayerGesture = UITapGestureRecognizer(target: self, action: #selector(playerTapped(_:)))
+        videoPlayer.addGestureRecognizer(videoPlayerGesture)
+        videoPlayer.backgroundColor = .white
+        
+        playButton.image = Theme.Images.play
+        playButton.layer.opacity = 0
+        
+        activityIndicator.startAnimating()
+        activityIndicator.style = UIActivityIndicatorView.Style.whiteLarge
+        
+        errorLabel.text = Constants.errorLabelText
+        errorLabel.textColor = Theme.Colors.lightGray
+        errorLabel.textAlignment = .center
+        errorLabel.numberOfLines = 0
+        errorLabel.font = .systemFont(ofSize: 22, weight: .light)
         
         // Bottom
         bottomContainer.addSubview(timeline)
@@ -313,14 +353,7 @@ extension TVPlayerView {
         
         contextMenu.layer.cornerRadius = 14
         contextMenu.clipsToBounds = true
-        
-        let videoPlayerGesture = UITapGestureRecognizer(target: self, action: #selector(playerTapped(_:)))
-        videoPlayer.addGestureRecognizer(videoPlayerGesture)
-        videoPlayer.backgroundColor = .white
-        
-        playButton.image = Theme.Images.play
-        playButton.layer.opacity = 0
-        
+
         backgroundColor = .black
         let backgroundGesture = UITapGestureRecognizer(target: self, action: #selector(backgroundTapped(_:)))
         self.addGestureRecognizer(backgroundGesture)
@@ -334,6 +367,7 @@ extension TVPlayerView {
         topLabelsStackView.translatesAutoresizingMaskIntoConstraints = false
         videoPlayer.translatesAutoresizingMaskIntoConstraints = false
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        errorLabel.translatesAutoresizingMaskIntoConstraints = false
         playButton.translatesAutoresizingMaskIntoConstraints = false
         bottomContainer.translatesAutoresizingMaskIntoConstraints = false
         timeline.translatesAutoresizingMaskIntoConstraints = false
@@ -373,17 +407,20 @@ extension TVPlayerView {
             
             // Video player
             videoPlayerConstraint,
-//            videoPlayer.topAnchor.constraint(equalTo: topAnchor),
             videoPlayer.centerYAnchor.constraint(equalTo: centerYAnchor),
             videoPlayer.leadingAnchor.constraint(equalTo: leadingAnchor),
             videoPlayer.trailingAnchor.constraint(equalTo: trailingAnchor),
-//            videoPlayer.bottomAnchor.constraint(equalTo: bottomAnchor),
             
             // Activity indicator
             activityIndicator.widthAnchor.constraint(equalToConstant: 44),
             activityIndicator.heightAnchor.constraint(equalTo: activityIndicator.widthAnchor),
             activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: centerYAnchor),
+            
+            // Error label
+            errorLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            errorLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            errorLabel.widthAnchor.constraint(equalTo: widthAnchor, constant: -Constants.largePadding * 2),
             
             // PlayImage
             playButton.widthAnchor.constraint(equalToConstant: Constants.playImageSide),

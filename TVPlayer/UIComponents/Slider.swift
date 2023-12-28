@@ -9,9 +9,8 @@ import UIKit
 
 final class Slider: UIView {
     
-    private var lineMask = UIView()
-    private var dragValue: CGFloat = 0
-    private var filledLineConstraint = NSLayoutConstraint()
+    private var track = UIView()
+    private var trackConstraint = NSLayoutConstraint()
     let gradientlayer = CAGradientLayer()
     let label = UILabel()
     var frameWidth: CGFloat = 0
@@ -27,17 +26,15 @@ final class Slider: UIView {
     }
     
     func setupView() {
-        addSubview(lineMask)
+        addSubview(track)
         
         backgroundColor = Theme.Colors.gray
-        lineMask.backgroundColor = Theme.Colors.accent
+        track.backgroundColor = Theme.Colors.accent
         gradientlayer.type = .axial
         gradientlayer.colors = [Theme.Colors.accent?.cgColor, Theme.Colors.mint?.cgColor]
         gradientlayer.startPoint = CGPoint(x: 0, y: 1)
         gradientlayer.endPoint = CGPoint(x: 1, y: 1)
-        lineMask.layer.addSublayer(gradientlayer)
-        
-//        lineMask.layer.mask = gradientlayer
+        track.layer.addSublayer(gradientlayer)
         let dragGesture = UIPanGestureRecognizer(target: self, action: #selector(drag(_:)))
         self.addGestureRecognizer(dragGesture)
     }
@@ -63,11 +60,11 @@ final class Slider: UIView {
     @objc private func drag(_ gesture: UIPanGestureRecognizer) {
         let velocity = gesture.velocity(in: self)
         let minMax = (min: -frameWidth, max: CGFloat(0))
-        let constraintValue = filledLineConstraint.constant + (velocity.x / 100)
+        let constraintValue = trackConstraint.constant + (velocity.x / 100)
         
-        let sliderValue = (lineMask.frame.width / frame.width) * 100
+        let sliderValue = (track.frame.width / frame.width) * 100
         if constraintValue < minMax.max, constraintValue >= minMax.min {
-            filledLineConstraint.constant = constraintValue
+            trackConstraint.constant = constraintValue
             sliderDidMoveClosure?(sliderValue)
         }
         
@@ -77,23 +74,27 @@ final class Slider: UIView {
     }
     
     func setupConstraints() {
-        lineMask.translatesAutoresizingMaskIntoConstraints = false
-        filledLineConstraint = lineMask.trailingAnchor.constraint(equalTo: trailingAnchor)
+        track.translatesAutoresizingMaskIntoConstraints = false
+        trackConstraint = track.trailingAnchor.constraint(equalTo: trailingAnchor)
         
         NSLayoutConstraint.activate([
-            lineMask.topAnchor.constraint(equalTo: topAnchor),
-            lineMask.bottomAnchor.constraint(equalTo: bottomAnchor),
-            lineMask.leadingAnchor.constraint(equalTo: leadingAnchor),
-            filledLineConstraint,
+            track.topAnchor.constraint(equalTo: topAnchor),
+            track.bottomAnchor.constraint(equalTo: bottomAnchor),
+            track.leadingAnchor.constraint(equalTo: leadingAnchor),
+            trackConstraint,
         ])
     }
+    
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+            return bounds.insetBy(dx: -10, dy: -10).contains(point)
+        }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         gradientlayer.frame = bounds
         layer.cornerRadius = bounds.height / 2
-        lineMask.layer.cornerRadius = lineMask.bounds.height / 2
-        lineMask.layer.masksToBounds = true
+        track.layer.cornerRadius = track.bounds.height / 2
+        track.layer.masksToBounds = true
         self.frameWidth = bounds.width
     }
 }

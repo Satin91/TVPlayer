@@ -36,18 +36,21 @@ final class TVPlayerController: UIViewController {
 }
 
 extension TVPlayerController: TVPlayerViewActionsDelegate {
-    func outsideTapped() {
-        
+    func completeLoading(success: Bool) {
+        if success {
+            model.playerState.send(.playing)
+        } else {
+            model.playerState.send(.failed)
+        }
     }
     
-    func videoIsLoaded() {
-        model.playerState.send(.playing)
+    func outsideTapped() {
+        
     }
     
     func tapResolution(scale: String) {
         // imitation of resolution change
         let previousState = model.playerState.value
-        
         model.playerState.send(.loading)
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             self.model.playerState.send(previousState)
@@ -57,6 +60,8 @@ extension TVPlayerController: TVPlayerViewActionsDelegate {
     func playerTapped() {
         switch model.playerState.value {
         case .loading:
+            break
+        case .failed:
             break
         case .playing:
             model.playerState.send(.pause)

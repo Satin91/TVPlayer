@@ -10,6 +10,7 @@ import Foundation
 class TVPlayerModel {
     enum PlayerState {
         case loading
+        case failed
         case playing
         case pause
         case stop
@@ -21,12 +22,7 @@ class TVPlayerModel {
         self.tvChannel = tvChannel
     }
     
-    func setPlayerState(_ to: PlayerState) {
-        self.playerState.send(to)
-    }
-    
     func changeResolution(scale: String) {
         
     }
-    
 }

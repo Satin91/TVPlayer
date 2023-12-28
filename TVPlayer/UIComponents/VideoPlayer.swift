@@ -21,7 +21,7 @@ class VideoPlayer: UIView {
     
     private var maxPreviousSecondsBuffer: Double = 0
     
-    private var readyToPlay: (() -> Void)?
+    private var loadedCompletedClosure: ((Bool) -> Void)?
     
     func configure(with url: URL?) {
         guard let url = url else  {
@@ -35,29 +35,18 @@ class VideoPlayer: UIView {
         subscribe()
     }
     
-    
-    func subscribe() {
-        let item = player.currentItem
-        observer = item?.observe(\.status, changeHandler: { [weak self] item, value in
-            if !item.isPlaybackLikelyToKeepUp {
-                self?.maxPreviousSecondsBuffer = self?.player.currentTime().seconds ?? 0
-                self?.readyToPlay?()
-            }
-        })
-    }
-    
-    func videoLoadingComplete(_ handler: @escaping () -> Void) {
-        readyToPlay = {
-            handler()
-        }
-    }
-    
     func playVideo() {
         player.play()
     }
     
     func pauseVideo() {
         player.pause()
+    }
+    
+    public func videoLoadingComplete(_ handler: @escaping (Bool) -> Void) {
+        loadedCompletedClosure = { [weak self] success in
+            handler(success)
+        }
     }
     
     func rewind(to value: CGFloat) {
@@ -68,6 +57,22 @@ class VideoPlayer: UIView {
         player.seek(to: timeForSeek, toleranceBefore: .zero, toleranceAfter: .zero)
         let rewindSeconds = maxPreviousSecondsBuffer - rewindTime
         self.currentTime.send(rewindSeconds)
+    }
+    
+    private func subscribe() {
+        let item = player.currentItem
+        observer = item?.observe(\.status ) { [weak self] item, value in
+//            guard let value = item.status else { return }
+            switch item.status {
+            case .readyToPlay:
+                self?.maxPreviousSecondsBuffer = self?.player.currentTime().seconds ?? 0
+                self?.loadedCompletedClosure?(true)
+            case .failed:
+                self?.loadedCompletedClosure?(false)
+            default:
+                break
+            }
+        }
     }
     
     override func layoutSubviews() {
