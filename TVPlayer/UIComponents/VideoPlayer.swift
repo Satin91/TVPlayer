@@ -44,7 +44,7 @@ class VideoPlayer: UIView {
     }
     
     public func videoLoadingComplete(_ handler: @escaping (Bool) -> Void) {
-        loadedCompletedClosure = { [weak self] success in
+        loadedCompletedClosure = { success in
             handler(success)
         }
     }

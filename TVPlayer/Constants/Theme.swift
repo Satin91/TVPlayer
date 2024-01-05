@@ -27,5 +27,6 @@ enum Theme {
         static var arrowLeft: UIImage { UIImage(named: "arrowLeft") ?? UIImage() }
         static var settings: UIImage { UIImage(named: "settings") ?? UIImage() }
         static var play: UIImage { UIImage(named: "play") ?? UIImage() }
+        static var pause: UIImage { UIImage(named: "pause") ?? UIImage() }
     }
 }

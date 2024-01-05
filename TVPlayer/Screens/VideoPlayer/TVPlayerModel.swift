@@ -8,21 +8,17 @@
 import Foundation
 
 class TVPlayerModel {
-    enum PlayerState {
-        case loading
-        case failed
-        case playing
-        case pause
-        case stop
+    enum PlayerActions {
+        case loadVideo
+        case showError
+        case playVideo
+        case pauseVideo
+        case stopPlayer
     }
     var tvChannel: TVChannel?
-    var playerState = Observable(TVPlayerModel.PlayerState.loading)
+    var playerActions = Observable(TVPlayerModel.PlayerActions.loadVideo)
     
     init(tvChannel: TVChannel? = nil) {
         self.tvChannel = tvChannel
-    }
-    
-    func changeResolution(scale: String) {
-        
     }
 }

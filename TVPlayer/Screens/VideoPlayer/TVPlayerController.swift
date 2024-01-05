@@ -27,7 +27,7 @@ final class TVPlayerController: UIViewController {
     }
     
     func bind() {
-        model.playerState.bind { [weak self] in self?.presentedView.playerState.send($0) }
+        model.playerActions.bind { [weak self] in self?.presentedView.playerState.send($0) }
     }
     
     func setupView() {
@@ -36,11 +36,19 @@ final class TVPlayerController: UIViewController {
 }
 
 extension TVPlayerController: TVPlayerViewActionsDelegate {
+    func playButtonTapped() {
+        model.playerActions.send(.playVideo)
+    }
+    
+    func pauseButtonTapped() {
+        model.playerActions.send(.pauseVideo)
+    }
+    
     func completeLoading(success: Bool) {
         if success {
-            model.playerState.send(.playing)
+            model.playerActions.send(.playVideo)
         } else {
-            model.playerState.send(.failed)
+            model.playerActions.send(.showError)
         }
     }
     
@@ -50,30 +58,20 @@ extension TVPlayerController: TVPlayerViewActionsDelegate {
     
     func tapResolution(scale: String) {
         // imitation of resolution change
-        let previousState = model.playerState.value
-        model.playerState.send(.loading)
+        
+        let previousAction = model.playerActions.value
+        model.playerActions.send(.loadVideo)
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.model.playerState.send(previousState)
+            self.model.playerActions.send(previousAction)
         }
     }
     
     func playerTapped() {
-        switch model.playerState.value {
-        case .loading:
-            break
-        case .failed:
-            break
-        case .playing:
-            model.playerState.send(.pause)
-        case .pause:
-            model.playerState.send(.playing)
-        case .stop:
-            break
-        }
+        
     }
     
     func navigationBackButtonTap() {
-        model.playerState.send(.stop)
+        model.playerActions.send(.stopPlayer)
         coordinator?.dismiss()
     }
 }

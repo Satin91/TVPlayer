@@ -13,6 +13,8 @@ protocol TVPlayerViewActionsDelegate: AnyObject {
     func navigationBackButtonTap()
     func playerTapped()
     func outsideTapped()
+    func playButtonTapped()
+    func pauseButtonTapped()
     func completeLoading(success: Bool)
     func tapResolution(scale: String)
 }
@@ -26,7 +28,7 @@ final class TVPlayerView: UIView {
         static let smallPadding: CGFloat = 10
         static let mediumPadding: CGFloat = 16
         static let largePadding: CGFloat = 24
-        static let playImageSide: CGFloat = 120
+        static let playButtonSide: CGFloat = 70
         
         static let timerHidingPanelValue: CGFloat = 3.0
         static let videoHeightRatio: CGFloat = 0.5625
@@ -45,7 +47,7 @@ final class TVPlayerView: UIView {
     let broadcastLabel = UILabel()
     let channelNameLabel = UILabel()
     let topLabelsStackView = UIStackView()
-    let playButton = UIImageView()
+    let playButton = PlayButton()
     
     // bottom on view
     let bottomContainer = UIView()
@@ -56,29 +58,20 @@ final class TVPlayerView: UIView {
     let resolutions = ["1080p", "720p", "480p", "AUTO"]
     let contextMenu = ContextMenu(elements: ["1080p","720p", "480p", "AUTO"])
     
-    var playerState: Observable<TVPlayerModel.PlayerState> = .init(.pause)
+    var playerState: Observable<TVPlayerModel.PlayerActions> = .init(.stopPlayer)
     
     private var timerHidingPanel: Timer?
     private var isErrorVisible = Observable(true)
-    private var isPanelVisible = Observable(true)
-    private var isPlayButtonVisible = Observable(true)
+    private var isControlPanelVisible = Observable(true)
     private var isContextVisible = Observable(false)
     private var isVideoVisible = Observable(false)
     private var isIndicatorVisible = Observable(false)
+    private var isPlayingVideo = Observable(true)
     
     weak var actionsDelegate: TVPlayerViewActionsDelegate?
     
     private var topContainerConstraint = NSLayoutConstraint()
     private var bottomContainerConstraint = NSLayoutConstraint()
-    private var videoPlayerConstraint = NSLayoutConstraint()
-    
-    private var videoPlayerHeight: CGFloat {
-        if UIDevice.current.orientation == .portrait {
-            return frame.width * Constants.videoHeightRatio
-        } else {
-            return frame.height
-        }
-    }
     
     private var videoPlayer = VideoPlayer()
     private let activityIndicator = UIActivityIndicatorView()
@@ -98,35 +91,44 @@ final class TVPlayerView: UIView {
         super.init(frame: frame)
         setupView()
         makeConstraints()
-        subscribe()
+        externalActions()
+        internalSubscribers()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func subscribe() {
+    private func externalActions() {
         playerState.subscribe { [unowned self] playerState in
             switch playerState {
-            case .failed:
-                failedState()
-            case .loading:
-                loadingState()
-            case .playing:
-                playingState()
-            case .pause:
-                pauseState()
-            case .stop:
-                stopState()
+            case .showError:
+                showError()
+            case .loadVideo:
+                loadVideo()
+            case .playVideo:
+                playVideo()
+            case .pauseVideo:
+                pauseVideo()
+            case .stopPlayer:
+                stopPlayer()
             }
         }
-        
+    }
+    
+    private func internalSubscribers() {
         videoPlayer.currentTime.subscribe { [unowned self] seconds in
             timelineLabel.text = seconds > 10 ? "-" + seconds.stringSecondsFormat() : Constants.liveBroadcastText
         }
         
+        isPlayingVideo.subscribe { [unowned self] isPlaying in
+            isPlaying ? videoPlayer.playVideo() : videoPlayer.pauseVideo()
+            playButton.setState(isPlaying)
+        }
+        
         isVideoVisible.subscribe { [unowned self] isVisible in
             videoPlayer.isHidden = !isVisible
+            playButton.isHidden = !isVisible
         }
         
         isIndicatorVisible.subscribe { [unowned self] isVisible in
@@ -137,12 +139,8 @@ final class TVPlayerView: UIView {
             errorLabel.isHidden = !isError
         }
         
-        isPanelVisible.subscribe { [unowned self] visible in
-            visible ? showPanel() : hidePanel()
-        }
-        
-        isPlayButtonVisible.subscribe { [unowned self] visible in
-            visible ? showPlayButton() : hidePlayButton()
+        isControlPanelVisible.subscribe { [unowned self] visible in
+            visible ? showControlsPanel() : hideControlsPanel()
         }
         
         isContextVisible.subscribe { [unowned self] visible in
@@ -168,69 +166,70 @@ final class TVPlayerView: UIView {
         }
     }
     
-    private func loadingState() {
-        isPlayButtonVisible.send(false)
+    private func loadVideo() {
         isIndicatorVisible.send(true)
         isVideoVisible.send(false)
         isErrorVisible.send(false)
-        videoPlayer.pauseVideo()
+        isPlayingVideo.send(false)
     }
     
-    private func failedState() {
+    private func showError() {
         isVideoVisible.send(false)
-        isPlayButtonVisible.send(false)
         isIndicatorVisible.send(false)
         isContextVisible.send(false)
         isErrorVisible.send(true)
+        isPlayingVideo.send(false)
     }
     
-    private func playingState() {
+    private func playVideo() {
         isVideoVisible.send(true)
         isErrorVisible.send(false)
         isIndicatorVisible.send(false)
-        isPlayButtonVisible.send(false)
         isContextVisible.send(false)
         timerHidingPanel = Timer.scheduledTimer(withTimeInterval: Constants.timerHidingPanelValue, repeats: false) { timer in
-            self.isPanelVisible.send(false)
+            self.isControlPanelVisible.send(false)
         }
-        videoPlayer.playVideo()
+        isPlayingVideo.send(true)
     }
     
-    private func pauseState() {
+    private func pauseVideo() {
         timerHidingPanel?.invalidate()
         isVideoVisible.send(true)
         isIndicatorVisible.send(false)
-        isPlayButtonVisible.send(true)
-        isPanelVisible.send(true)
-        videoPlayer.pauseVideo()
+        isControlPanelVisible.send(true)
+        isPlayingVideo.send(false)
     }
     
-    private func stopState() {
-        videoPlayer.pauseVideo()
+    private func stopPlayer() {
+        isPlayingVideo.send(false)
     }
     
-    private func showPanel() {
+    private func showControlsPanel() {
         self.topContainerConstraint.constant = Constants.topPadding
         self.bottomContainerConstraint.constant = -Constants.bottomPadding
+        
         UIView.animate(withDuration: 0.3) {
             self.topContainer.layer.opacity = 1
             self.bottomContainer.layer.opacity = 1
+            self.playButton.layer.opacity = 1
             self.layoutIfNeeded()
         }
     }
     
-    private func hidePanel(_ delay: CGFloat = 0) {
+    private func hideControlsPanel(_ delay: CGFloat = 0) {
         self.topContainerConstraint.constant = 0
         self.bottomContainerConstraint.constant = 0
         
         UIView.animate(withDuration: 0.3) {
             self.topContainer.layer.opacity = 0
             self.bottomContainer.layer.opacity = 0
+            self.playButton.layer.opacity = 0
             self.layoutIfNeeded()
         }
     }
     
     private func showPlayButton() {
+        print("Show play button")
         playButton.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
         UIView.animate(withDuration: 0.4, delay: .zero, usingSpringWithDamping: 0.55, initialSpringVelocity: 0.8) {
             self.playButton.layer.opacity = 1
@@ -239,38 +238,31 @@ final class TVPlayerView: UIView {
     }
     
     private func hidePlayButton() {
-        UIView.animate(withDuration: 0.05) {
-            self.playButton.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
-        } completion: { _ in
-            UIView.animate(withDuration: 0.2) {
-                self.playButton.transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
-                self.playButton.layer.opacity = 0
-            }
+        UIView.animate(withDuration: 0.2) {
+            self.playButton.layer.opacity = 0
         }
     }
     
+    @objc private func playButtonTapped(_ gesture: UITapGestureRecognizer) {
+        
+        isPlayingVideo.value ? actionsDelegate?.pauseButtonTapped() : actionsDelegate?.playButtonTapped()
+    }
+    
     @objc private func playerTapped(_ gesture: UITapGestureRecognizer) {
-        actionsDelegate?.playerTapped()
+        timerHidingPanel?.invalidate()
+        if isPlayingVideo.value && !isControlPanelVisible.value {
+            self.isControlPanelVisible.send(true)
+            timerHidingPanel = Timer.scheduledTimer(withTimeInterval: Constants.timerHidingPanelValue, repeats: false) { timer in
+                self.isControlPanelVisible.send(false)
+            }
+        } else {
+            isControlPanelVisible.send(!isControlPanelVisible.value)
+        }
     }
     
     @objc private func backgroundTapped(_ gesture: UITapGestureRecognizer) {
         timerHidingPanel?.invalidate()
         isContextVisible.send(false)
-        
-        switch playerState.value {
-        case .playing:
-            if isPanelVisible.value {
-                isPanelVisible.send(false)
-            } else {
-                isPanelVisible.send(true)
-                timerHidingPanel?.invalidate()
-                timerHidingPanel = Timer.scheduledTimer(withTimeInterval: Constants.timerHidingPanelValue, repeats: false) { timer in
-                    self.isPanelVisible.send(false)
-                }
-            }
-        default:
-            isPanelVisible.send(!isPanelVisible.value)
-        }
     }
     
     @objc private func backButtonTapped(_ button: UIButton) {
@@ -279,17 +271,14 @@ final class TVPlayerView: UIView {
     
     @objc private func settingsButtonTapped(_ button: UIButton) {
         if contextMenu.layer.opacity == 0 {
-            isContextVisible.send(true)
             timerHidingPanel?.invalidate()
         } else {
-            isContextVisible.send(false)
             timerHidingPanel?.invalidate()
             timerHidingPanel = Timer.scheduledTimer(withTimeInterval: Constants.timerHidingPanelValue, repeats: false) { timer in
-                self.isPanelVisible.send(false)
+                self.isControlPanelVisible.send(false)
             }
         }
     }
-    
 }
 
 // MARK: - Setup view
@@ -324,10 +313,9 @@ extension TVPlayerView {
         // Center
         let videoPlayerGesture = UITapGestureRecognizer(target: self, action: #selector(playerTapped(_:)))
         videoPlayer.addGestureRecognizer(videoPlayerGesture)
-        videoPlayer.backgroundColor = .white
         
-        playButton.image = Theme.Images.play
-        playButton.layer.opacity = 0
+        let playButtonTapGesture = UITapGestureRecognizer(target: self, action: #selector(playButtonTapped(_:)))
+        playButton.addGestureRecognizer(playButtonTapGesture)
         
         activityIndicator.startAnimating()
         activityIndicator.style = UIActivityIndicatorView.Style.whiteLarge
@@ -378,8 +366,6 @@ extension TVPlayerView {
         topContainerConstraint = topContainer.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: Constants.topPadding)
         bottomContainerConstraint = bottomContainer.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -Constants.bottomPadding)
         
-        videoPlayerConstraint = videoPlayer.heightAnchor.constraint(equalToConstant: 0)
-        
         NSLayoutConstraint.activate([
             // Top container
             topContainerConstraint,
@@ -406,8 +392,8 @@ extension TVPlayerView {
             topLabelsStackView.trailingAnchor.constraint(equalTo: topContainer.trailingAnchor),
             
             // Video player
-            videoPlayerConstraint,
-            videoPlayer.centerYAnchor.constraint(equalTo: centerYAnchor),
+            videoPlayer.topAnchor.constraint(equalTo: topAnchor),
+            videoPlayer.bottomAnchor.constraint(equalTo: bottomAnchor),
             videoPlayer.leadingAnchor.constraint(equalTo: leadingAnchor),
             videoPlayer.trailingAnchor.constraint(equalTo: trailingAnchor),
             
@@ -423,8 +409,8 @@ extension TVPlayerView {
             errorLabel.widthAnchor.constraint(equalTo: widthAnchor, constant: -Constants.largePadding * 2),
             
             // PlayImage
-            playButton.widthAnchor.constraint(equalToConstant: Constants.playImageSide),
-            playButton.heightAnchor.constraint(equalTo: playButton.widthAnchor),
+            playButton.widthAnchor.constraint(equalToConstant: Constants.playButtonSide),
+            playButton.heightAnchor.constraint(equalToConstant: Constants.playButtonSide),
             playButton.centerXAnchor.constraint(equalTo: videoPlayer.centerXAnchor),
             playButton.centerYAnchor.constraint(equalTo: videoPlayer.centerYAnchor),
             
@@ -456,11 +442,5 @@ extension TVPlayerView {
             contextMenu.heightAnchor.constraint(equalToConstant: 200),
             contextMenu.widthAnchor.constraint(equalToConstant: 128),
         ])
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        videoPlayerConstraint.constant = videoPlayerHeight
-        layoutIfNeeded()
     }
 }

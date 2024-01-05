@@ -30,6 +30,7 @@
 		8EBF89462B376AFC004EFE12 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EBF89452B376AFC004EFE12 /* Observable.swift */; };
 		8EE2BCB92B3C35AD00F16F4C /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EE2BCB82B3C35AD00F16F4C /* SearchBar.swift */; };
 		8EE2BCC02B3C676000F16F4C /* TVChannelCoreDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8EE2BCBE2B3C676000F16F4C /* TVChannelCoreDataModel.xcdatamodeld */; };
+		8EE413152B3F04B700BC5CC5 /* PlayButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EE413142B3F04B700BC5CC5 /* PlayButton.swift */; };
 		8EFA73F52B34A11E00F13FB6 /* TVChannelsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFA73F42B34A11E00F13FB6 /* TVChannelsController.swift */; };
 		8EFA73F82B34A76F00F13FB6 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFA73F72B34A76F00F13FB6 /* Theme.swift */; };
 		8EFA73FA2B34A82B00F13FB6 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8EFA73F92B34A82B00F13FB6 /* Colors.xcassets */; };
@@ -64,6 +65,7 @@
 		8EBF89452B376AFC004EFE12 /* Observable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
 		8EE2BCB82B3C35AD00F16F4C /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		8EE2BCBF2B3C676000F16F4C /* TVChannelCoreDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TVChannelCoreDataModel.xcdatamodel; sourceTree = "<group>"; };
+		8EE413142B3F04B700BC5CC5 /* PlayButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayButton.swift; sourceTree = "<group>"; };
 		8EFA73F42B34A11E00F13FB6 /* TVChannelsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVChannelsController.swift; sourceTree = "<group>"; };
 		8EFA73F72B34A76F00F13FB6 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		8EFA73F92B34A82B00F13FB6 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
@@ -195,6 +197,7 @@
 				8E61B3482B3A195500B1EF6E /* Slider.swift */,
 				8E8A06BE2B3B17E50045E8F2 /* ContextMenu.swift */,
 				8EE2BCB82B3C35AD00F16F4C /* SearchBar.swift */,
+				8EE413142B3F04B700BC5CC5 /* PlayButton.swift */,
 			);
 			path = UIComponents;
 			sourceTree = "<group>";
@@ -315,6 +318,7 @@
 				8E1C461B2B388952009035E0 /* TVPlayerView.swift in Sources */,
 				8EE2BCB92B3C35AD00F16F4C /* SearchBar.swift in Sources */,
 				8E61B3472B39FB1500B1EF6E /* TVPlayerModel.swift in Sources */,
+				8EE413152B3F04B700BC5CC5 /* PlayButton.swift in Sources */,
 				8EE2BCC02B3C676000F16F4C /* TVChannelCoreDataModel.xcdatamodeld in Sources */,
 				8E500C342B34897700574211 /* TVChannelsView.swift in Sources */,
 				8E500C152B3463D600574211 /* AppDelegate.swift in Sources */,
