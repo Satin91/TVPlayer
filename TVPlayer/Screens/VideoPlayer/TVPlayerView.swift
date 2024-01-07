@@ -28,7 +28,7 @@ final class TVPlayerView: UIView {
         static let smallPadding: CGFloat = 10
         static let mediumPadding: CGFloat = 16
         static let largePadding: CGFloat = 24
-        static let playButtonSide: CGFloat = 70
+        static let playButtonSide: CGFloat = 80
         
         static let timerHidingPanelValue: CGFloat = 3.0
         static let videoHeightRatio: CGFloat = 0.5625
@@ -114,6 +114,24 @@ final class TVPlayerView: UIView {
                 stopPlayer()
             }
         }
+        
+        timeline.sliderDidMove { [weak self] _ in
+            self?.timerHidingPanel?.fireDate = Date(timeIntervalSinceNow: Constants.timerHidingPanelValue)
+        }
+        
+        timeline.sliderDidEndMove { [weak self] value in
+            self?.videoPlayer.rewind(to: value)
+        }
+        
+        videoPlayer.videoLoadingComplete { [weak self] success in
+            self?.actionsDelegate?.completeLoading(success: success)
+        }
+        
+        contextMenu.didTapElement { [weak self] elementIndex in
+            let scale = self!.resolutions[elementIndex]
+            self?.actionsDelegate?.tapResolution(scale: scale)
+            self?.isContextVisible.send(false)
+        }
     }
     
     private func internalSubscribers() {
@@ -123,7 +141,7 @@ final class TVPlayerView: UIView {
         
         isPlayingVideo.subscribe { [unowned self] isPlaying in
             isPlaying ? videoPlayer.playVideo() : videoPlayer.pauseVideo()
-            playButton.setState(isPlaying)
+//            playButton.setState(isPlaying)
         }
         
         isVideoVisible.subscribe { [unowned self] isVisible in
@@ -145,24 +163,6 @@ final class TVPlayerView: UIView {
         
         isContextVisible.subscribe { [unowned self] visible in
             visible ? contextMenu.show() : contextMenu.hide()
-        }
-        
-        timeline.sliderDidMove { [weak self] _ in
-            self?.timerHidingPanel?.fireDate = Date(timeIntervalSinceNow: Constants.timerHidingPanelValue)
-        }
-        
-        timeline.sliderDidEndMove { [weak self] value in
-            self?.videoPlayer.rewind(to: value)
-        }
-        
-        videoPlayer.videoLoadingComplete { [weak self] success in
-            self?.actionsDelegate?.completeLoading(success: success)
-        }
-        
-        contextMenu.didTapElement { [weak self] elementIndex in
-            let scale = self!.resolutions[elementIndex]
-            self?.actionsDelegate?.tapResolution(scale: scale)
-            self?.isContextVisible.send(false)
         }
     }
     
@@ -229,7 +229,6 @@ final class TVPlayerView: UIView {
     }
     
     private func showPlayButton() {
-        print("Show play button")
         playButton.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
         UIView.animate(withDuration: 0.4, delay: .zero, usingSpringWithDamping: 0.55, initialSpringVelocity: 0.8) {
             self.playButton.layer.opacity = 1
@@ -244,12 +243,13 @@ final class TVPlayerView: UIView {
     }
     
     @objc private func playButtonTapped(_ gesture: UITapGestureRecognizer) {
-        
         isPlayingVideo.value ? actionsDelegate?.pauseButtonTapped() : actionsDelegate?.playButtonTapped()
+        playButton.buttonTapped(isPlayingVideo.value)
     }
     
     @objc private func playerTapped(_ gesture: UITapGestureRecognizer) {
         timerHidingPanel?.invalidate()
+        isContextVisible.send(false)
         if isPlayingVideo.value && !isControlPanelVisible.value {
             self.isControlPanelVisible.send(true)
             timerHidingPanel = Timer.scheduledTimer(withTimeInterval: Constants.timerHidingPanelValue, repeats: false) { timer in
@@ -260,11 +260,6 @@ final class TVPlayerView: UIView {
         }
     }
     
-    @objc private func backgroundTapped(_ gesture: UITapGestureRecognizer) {
-        timerHidingPanel?.invalidate()
-        isContextVisible.send(false)
-    }
-    
     @objc private func backButtonTapped(_ button: UIButton) {
         actionsDelegate?.navigationBackButtonTap()
     }
@@ -272,10 +267,14 @@ final class TVPlayerView: UIView {
     @objc private func settingsButtonTapped(_ button: UIButton) {
         if contextMenu.layer.opacity == 0 {
             timerHidingPanel?.invalidate()
+            isContextVisible.send(true)
         } else {
             timerHidingPanel?.invalidate()
-            timerHidingPanel = Timer.scheduledTimer(withTimeInterval: Constants.timerHidingPanelValue, repeats: false) { timer in
-                self.isControlPanelVisible.send(false)
+            isContextVisible.send(false)
+            if isPlayingVideo.value {
+                timerHidingPanel = Timer.scheduledTimer(withTimeInterval: Constants.timerHidingPanelValue, repeats: false) { timer in
+                    self.isControlPanelVisible.send(false)
+                }
             }
         }
     }
@@ -316,6 +315,7 @@ extension TVPlayerView {
         
         let playButtonTapGesture = UITapGestureRecognizer(target: self, action: #selector(playButtonTapped(_:)))
         playButton.addGestureRecognizer(playButtonTapGesture)
+        playButton.configure(playState: isPlayingVideo.value)
         
         activityIndicator.startAnimating()
         activityIndicator.style = UIActivityIndicatorView.Style.whiteLarge
@@ -343,8 +343,6 @@ extension TVPlayerView {
         contextMenu.clipsToBounds = true
 
         backgroundColor = .black
-        let backgroundGesture = UITapGestureRecognizer(target: self, action: #selector(backgroundTapped(_:)))
-        self.addGestureRecognizer(backgroundGesture)
     }
     
     private func makeConstraints() {
@@ -421,7 +419,7 @@ extension TVPlayerView {
             bottomContainer.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -Constants.mediumPadding),
             
             // Tmeline
-            timeline.heightAnchor.constraint(equalToConstant: 4),
+            timeline.heightAnchor.constraint(equalToConstant: 10),
             timeline.bottomAnchor.constraint(equalTo: bottomContainer.bottomAnchor),
             timeline.leadingAnchor.constraint(equalTo: bottomContainer.leadingAnchor),
             timeline.trailingAnchor.constraint(equalTo: bottomContainer.trailingAnchor),

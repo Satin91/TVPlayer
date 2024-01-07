@@ -58,15 +58,18 @@ final class Slider: UIView {
     private var sliderDidEndMoveClosure: ((CGFloat) -> Void)?
     
     @objc private func drag(_ gesture: UIPanGestureRecognizer) {
-        let velocity = gesture.velocity(in: self)
-        let minMax = (min: -frameWidth, max: CGFloat(0))
-        let constraintValue = trackConstraint.constant + (velocity.x / 100)
-        
+        var velocity = gesture.velocity(in: self)
+        let range = (min: -frameWidth, max: CGFloat(0))
+        var constraintValue = trackConstraint.constant + (velocity.x / 100)
         let sliderValue = (track.frame.width / frame.width) * 100
-        if constraintValue < minMax.max, constraintValue >= minMax.min {
-            trackConstraint.constant = constraintValue
-            sliderDidMoveClosure?(sliderValue)
+        
+        if constraintValue > range.max {
+            constraintValue = range.max
+        } else if constraintValue < range.min {
+            constraintValue = range.min
         }
+        trackConstraint.constant = constraintValue
+        sliderDidMoveClosure?(sliderValue)
         
         if gesture.state == .ended {
             sliderDidEndMoveClosure?(sliderValue)

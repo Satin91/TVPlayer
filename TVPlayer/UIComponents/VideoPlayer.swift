@@ -23,23 +23,22 @@ class VideoPlayer: UIView {
     
     private var loadedCompletedClosure: ((Bool) -> Void)?
     
-    func configure(with url: URL?) {
+    public func configure(with url: URL?) {
         guard let url = url else  {
             // TODO: Make error
             fatalError("URL Not exists")
         }
-        player = AVPlayer(url: url)
         player = AVPlayer(url: url)
         playerLayer = .init(player: player)
         layer.addSublayer(playerLayer)
         subscribe()
     }
     
-    func playVideo() {
+    public func playVideo() {
         player.play()
     }
     
-    func pauseVideo() {
+    public func pauseVideo() {
         player.pause()
     }
     
@@ -49,7 +48,7 @@ class VideoPlayer: UIView {
         }
     }
     
-    func rewind(to value: CGFloat) {
+    public func rewind(to value: CGFloat) {
         let playerTime = player.currentTime()
         let scale = playerTime.timescale
         let rewindTime = self.maxPreviousSecondsBuffer * Double(value) / 100
@@ -62,7 +61,6 @@ class VideoPlayer: UIView {
     private func subscribe() {
         let item = player.currentItem
         observer = item?.observe(\.status ) { [weak self] item, value in
-//            guard let value = item.status else { return }
             switch item.status {
             case .readyToPlay:
                 self?.maxPreviousSecondsBuffer = self?.player.currentTime().seconds ?? 0
