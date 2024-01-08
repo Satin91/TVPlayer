@@ -62,7 +62,8 @@ final class TVChannelCell: UITableViewCell {
         favoriteButton.addTarget(self, action: #selector(tapFavorite(_:)), for: .touchUpInside)
         
         channelImage.backgroundColor = .white
-        channelImage.layer.cornerRadius = 12
+        channelImage.layer.cornerRadius = 14
+        channelImage.layer.masksToBounds = true
         channelNameLabel.textColor = .white
         currentBroadcastLabel.textColor = .white
     }

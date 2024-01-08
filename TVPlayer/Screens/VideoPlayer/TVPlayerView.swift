@@ -22,9 +22,9 @@ protocol TVPlayerViewActionsDelegate: AnyObject {
 final class TVPlayerView: UIView {
     
     enum Constants {
-        static let topContainerHeight: CGFloat = 44
-        static let topPadding: CGFloat = 12
-        static let bottomPadding: CGFloat = 12
+        static let topContainerHeight: CGFloat = 66
+        static var bottomCcontainerHeight: CGFloat = 96
+        static let padding: CGFloat = 12
         static let smallPadding: CGFloat = 10
         static let mediumPadding: CGFloat = 16
         static let largePadding: CGFloat = 24
@@ -205,8 +205,8 @@ final class TVPlayerView: UIView {
     }
     
     private func showControlsPanel() {
-        self.topContainerConstraint.constant = Constants.topPadding
-        self.bottomContainerConstraint.constant = -Constants.bottomPadding
+        self.topContainerConstraint.constant = 0
+        self.bottomContainerConstraint.constant = 0
         
         UIView.animate(withDuration: 0.3) {
             self.topContainer.layer.opacity = 1
@@ -217,8 +217,8 @@ final class TVPlayerView: UIView {
     }
     
     private func hideControlsPanel(_ delay: CGFloat = 0) {
-        self.topContainerConstraint.constant = 0
-        self.bottomContainerConstraint.constant = 0
+        self.topContainerConstraint.constant = -Constants.padding
+        self.bottomContainerConstraint.constant = Constants.padding
         
         UIView.animate(withDuration: 0.3) {
             self.topContainer.layer.opacity = 0
@@ -277,6 +277,12 @@ final class TVPlayerView: UIView {
                 }
             }
         }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        topContainer.gradient(start: 0, end: 1)
+        bottomContainer.gradient(start: 1, end: 0)
     }
 }
 
@@ -361,33 +367,33 @@ extension TVPlayerView {
         settingsButton.translatesAutoresizingMaskIntoConstraints = false
         contextMenu.translatesAutoresizingMaskIntoConstraints = false
         
-        topContainerConstraint = topContainer.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: Constants.topPadding)
-        bottomContainerConstraint = bottomContainer.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -Constants.bottomPadding)
+        topContainerConstraint = topContainer.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor)
+        bottomContainerConstraint = bottomContainer.bottomAnchor.constraint(equalTo: bottomAnchor)
         
         NSLayoutConstraint.activate([
             // Top container
             topContainerConstraint,
             topContainer.heightAnchor.constraint(equalToConstant: Constants.topContainerHeight),
-            topContainer.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: Constants.smallPadding),
-            topContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Constants.smallPadding),
+            topContainer.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            topContainer.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
             
             // Back button
-            backButton.topAnchor.constraint(equalTo: topContainer.topAnchor),
-            backButton.bottomAnchor.constraint(equalTo: topContainer.bottomAnchor),
-            backButton.leadingAnchor.constraint(equalTo: topContainer.leadingAnchor),
+            backButton.topAnchor.constraint(equalTo: topContainer.topAnchor, constant: Constants.padding),
+            backButton.bottomAnchor.constraint(equalTo: topContainer.bottomAnchor, constant: -Constants.padding),
+            backButton.leadingAnchor.constraint(equalTo: topContainer.leadingAnchor, constant: Constants.smallPadding),
             backButton.widthAnchor.constraint(equalTo: backButton.heightAnchor),
             
             // Channel image
-            channelImage.topAnchor.constraint(equalTo: topContainer.topAnchor),
-            channelImage.bottomAnchor.constraint(equalTo: topContainer.bottomAnchor),
+            channelImage.topAnchor.constraint(equalTo: topContainer.topAnchor, constant: Constants.padding),
+            channelImage.bottomAnchor.constraint(equalTo: topContainer.bottomAnchor, constant: -Constants.padding),
             channelImage.leadingAnchor.constraint(equalTo: backButton.trailingAnchor, constant: Constants.smallPadding),
             channelImage.widthAnchor.constraint(equalTo: channelImage.heightAnchor),
             
             // Labels stack view
-            topLabelsStackView.topAnchor.constraint(equalTo: topContainer.topAnchor),
-            topLabelsStackView.bottomAnchor.constraint(equalTo: topContainer.bottomAnchor),
+            topLabelsStackView.topAnchor.constraint(equalTo: topContainer.topAnchor, constant: Constants.padding),
+            topLabelsStackView.bottomAnchor.constraint(equalTo: topContainer.bottomAnchor, constant: -Constants.padding),
             topLabelsStackView.leadingAnchor.constraint(equalTo: channelImage.trailingAnchor, constant: Constants.largePadding),
-            topLabelsStackView.trailingAnchor.constraint(equalTo: topContainer.trailingAnchor),
+            topLabelsStackView.trailingAnchor.constraint(equalTo: topContainer.trailingAnchor, constant: -Constants.smallPadding),
             
             // Video player
             videoPlayer.topAnchor.constraint(equalTo: topAnchor),
@@ -411,31 +417,31 @@ extension TVPlayerView {
             playButton.heightAnchor.constraint(equalToConstant: Constants.playButtonSide),
             playButton.centerXAnchor.constraint(equalTo: videoPlayer.centerXAnchor),
             playButton.centerYAnchor.constraint(equalTo: videoPlayer.centerYAnchor),
-            
             // Bottom container
             bottomContainerConstraint,
-            bottomContainer.heightAnchor.constraint(equalToConstant: 44),
-            bottomContainer.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: Constants.mediumPadding),
-            bottomContainer.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -Constants.mediumPadding),
-            
-            // Tmeline
-            timeline.heightAnchor.constraint(equalToConstant: 10),
-            timeline.bottomAnchor.constraint(equalTo: bottomContainer.bottomAnchor),
-            timeline.leadingAnchor.constraint(equalTo: bottomContainer.leadingAnchor),
-            timeline.trailingAnchor.constraint(equalTo: bottomContainer.trailingAnchor),
+            bottomContainer.heightAnchor.constraint(equalToConstant: Constants.bottomCcontainerHeight + safeAreaInsets.bottom),
+            bottomContainer.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            bottomContainer.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
             
             // Timeline label
-            timelineLabel.topAnchor.constraint(equalTo: bottomContainer.topAnchor),
-            timelineLabel.leadingAnchor.constraint(equalTo: bottomContainer.leadingAnchor),
+            timelineLabel.topAnchor.constraint(equalTo: bottomContainer.topAnchor, constant: Constants.padding),
+            timelineLabel.leadingAnchor.constraint(equalTo: bottomContainer.leadingAnchor, constant: Constants.smallPadding),
             timelineLabel.widthAnchor.constraint(equalTo: bottomContainer.widthAnchor),
             
             // Settings button
-            settingsButton.topAnchor.constraint(equalTo: bottomContainer.topAnchor),
-            settingsButton.trailingAnchor.constraint(equalTo: bottomContainer.trailingAnchor),
+            settingsButton.topAnchor.constraint(equalTo: bottomContainer.topAnchor, constant: Constants.padding),
+            settingsButton.trailingAnchor.constraint(equalTo: bottomContainer.trailingAnchor, constant: -Constants.smallPadding),
             settingsButton.widthAnchor.constraint(equalToConstant: 24),
             settingsButton.heightAnchor.constraint(equalTo: settingsButton.widthAnchor),
             
-            contextMenu.bottomAnchor.constraint(equalTo: settingsButton.topAnchor, constant: -12),
+            // Tmeline
+            timeline.heightAnchor.constraint(equalToConstant: 10),
+            timeline.topAnchor.constraint(equalTo: settingsButton.bottomAnchor, constant: 6),
+            timeline.leadingAnchor.constraint(equalTo: bottomContainer.leadingAnchor, constant: Constants.smallPadding),
+            timeline.trailingAnchor.constraint(equalTo: bottomContainer.trailingAnchor, constant: -Constants.smallPadding),
+            
+            // Context menu
+            contextMenu.bottomAnchor.constraint(equalTo: settingsButton.topAnchor, constant: -Constants.padding),
             contextMenu.trailingAnchor.constraint(equalTo: settingsButton.trailingAnchor),
             contextMenu.heightAnchor.constraint(equalToConstant: 200),
             contextMenu.widthAnchor.constraint(equalToConstant: 128),

@@ -56,7 +56,7 @@ final class TVChannelsModel {
         switch currentSegment.value {
         case .all:
             channel.isFavorite.toggle()
-            channel.isFavorite ? createFavorite(channel) : removeFavorite(channel)
+            channel.isFavorite ? addFavorte(channel) : removeFavorite(channel)
             channels.send(allChannels)
         case .favorites:
             removeFavorite(channel)
@@ -66,7 +66,7 @@ final class TVChannelsModel {
     }
     
     func searchChannels(with text: String) {
-        if text == "" {
+        if text.isEmpty {
             channels.send(currentSegment.value == .all ? allChannels : favoriteChannels)
         } else {
             let filteredChannels = (currentSegment.value == .all ? allChannels : favoriteChannels).filter { channel in
@@ -76,7 +76,7 @@ final class TVChannelsModel {
         }
     }
     
-    func createFavorite(_ channel: TVChannel) {
+    func addFavorte(_ channel: TVChannel) {
         guard channel.isFavorite else { return }
         if !favoriteChannels.contains(where: { $0.name == channel.name }) {
             favoriteChannels.append(channel)

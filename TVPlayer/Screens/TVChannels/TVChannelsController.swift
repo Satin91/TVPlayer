@@ -10,9 +10,8 @@ import UIKit
 class TVChannelsController: UIViewController {
     
     var coordinator: AppCoordinatorProtocol!
-    
-    private var presentedView = TVChannelsView()
     var model: TVChannelsModel!
+    private var presentedView = TVChannelsView()
     
     override func loadView() {
         super.loadView()
@@ -25,13 +24,13 @@ class TVChannelsController: UIViewController {
         bind()
     }
     
-    func bind() {
-        model.channels.bind { [weak self] in self?.presentedView.dynamicChannels.value = $0 }
-    }
-    
     func setupView() {
         self.view = presentedView
         self.presentedView.actionsDelegate = self
+    }
+    
+    func bind() {
+        model.channels.bind { [weak self] in self?.presentedView.dynamicChannels.value = $0 }
     }
 }
 

@@ -19,7 +19,6 @@ class TVChannel: Decodable {
     var channelURL: URL
     var isFavorite: Bool
     
-    
     init(channelCore: TVChannelCore) {
         self.id = Int(channelCore.id)
         self.name = channelCore.name ?? "No name"
